@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\WWW\barangay_dashboard_api_test\publish</_PublishTargetUrl>
+    <History>True|2022-05-31T05:25:04.4482485Z;True|2022-05-31T12:24:27.7374513+08:00;True|2022-05-31T12:21:12.8058402+08:00;True|2022-05-31T12:06:29.4940178+08:00;</History>
+  </PropertyGroup>
+</Project>

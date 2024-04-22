@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\WWW\stlpartylist_dashboard_api_test\publish</_PublishTargetUrl>
+    <History>True|2022-04-01T14:28:26.7204027Z;True|2022-04-01T22:21:51.7847720+08:00;False|2022-04-01T22:21:38.1516793+08:00;True|2022-04-01T21:42:31.9087589+08:00;True|2022-04-01T20:49:29.3827525+08:00;True|2022-03-31T17:21:31.4607442+08:00;True|2022-03-31T17:02:23.6507520+08:00;True|2022-03-31T16:32:55.0207903+08:00;</History>
+  </PropertyGroup>
+</Project>
