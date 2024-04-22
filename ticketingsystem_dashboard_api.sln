@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webapi", "webapi.csproj", "{EAB756D2-3389-4DAF-80EF-12B8341B5B83}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{32D2AF17-4A8B-450F-82CD-C90635E59E77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comm", "..\Comm\Comm.csproj", "{18055ACC-141D-4BC7-9A10-961702DEEA73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAB756D2-3389-4DAF-80EF-12B8341B5B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB756D2-3389-4DAF-80EF-12B8341B5B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB756D2-3389-4DAF-80EF-12B8341B5B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB756D2-3389-4DAF-80EF-12B8341B5B83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D2AF17-4A8B-450F-82CD-C90635E59E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D2AF17-4A8B-450F-82CD-C90635E59E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D2AF17-4A8B-450F-82CD-C90635E59E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D2AF17-4A8B-450F-82CD-C90635E59E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18055ACC-141D-4BC7-9A10-961702DEEA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18055ACC-141D-4BC7-9A10-961702DEEA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18055ACC-141D-4BC7-9A10-961702DEEA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18055ACC-141D-4BC7-9A10-961702DEEA73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {673EE133-AFD4-4906-87BC-522430F5F05C}
+	EndGlobalSection
+EndGlobal
