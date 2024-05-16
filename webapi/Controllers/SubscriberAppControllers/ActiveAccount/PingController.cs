@@ -6,7 +6,7 @@ using webapi.App.RequestModel.Common;
 
 namespace webapi.Controllers.SubscriberAppControllers.ActiveAccount
 {
-    [Route("app/v1/stl/")]
+    [Route("app/v1/ticketingdashboard/")]
     [ApiController]
     [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
     public class PingController : ControllerBase

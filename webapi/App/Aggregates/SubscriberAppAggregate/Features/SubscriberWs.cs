@@ -83,6 +83,10 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
             stack.subscribe($"/{account.PL_ID}/notify", this.receivedCompanyNotication);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/chat", this.receivedBranchPublicChat);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/notify", this.receivedBranchNotication);
+
+
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
+
             //stack.subscribe($"/{account.CompanyID}/{account.BranchID}/arena", this.receivedBranchArena);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/chat", this.receivedSubscriberChat);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/notify", this.receivedSubscriberNotification);
@@ -134,6 +138,10 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         }
         private void receivedBranchNotication(Ultralight.StompMessage message){
             stomp("/branch", message.Body);
+        }
+        private void receivedTicketRequestCommunicator(Ultralight.StompMessage message)
+        {
+            stomp("/ticketrequest/iscommunicator", message.Body);
         }
         private void receivedBranchArena(Ultralight.StompMessage message){
             stomp("/arena", message.Body);

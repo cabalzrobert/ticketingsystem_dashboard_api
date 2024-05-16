@@ -61,7 +61,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                         PRF_PIC = row["PRF_PIC"].Str(),
                         SIGNATUREID = row["SIGNATUREID"].Str(),
                         SessionID = row["SSSN_ID"].Str(),
-                        ACT_TYP = row["ACT_TYP"].Str()
+                        ACT_TYP = row["ACT_TYP"].Str(),
+                        isCommunicator = Convert.ToBoolean(row["isCommunicator"].Str())
                     });
                 }
                 else if (ResultCode == "22")

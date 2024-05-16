@@ -11,6 +11,7 @@ using webapi.App.TSDashboardModel;
 using webapi.App.Aggregates.TicketingSystemDashboard.Features.Department;
 using webapi.App.Model.User;
 using webapi.App.RequestModel.Common;
+using Comm.Commons.Extensions;
 
 namespace webapi.Controllers.TicketingSystemDashboardController.Features.Department
 {
@@ -27,10 +28,10 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Departm
             _repo = repo;
         }
         [HttpPost]
-        [Route("new")]
+        [Route("save")]
         public async Task<IActionResult> TaskNew([FromBody] DepartmentModel request)
         {
-            var result = await _repo.SaveDepartmentAsyn(request);
+            var result = (request.DepartmentID.IsEmpty()) ? await _repo.SaveDepartmentAsyn(request) : await _repo.UpdateDepartmentAsyn(request);
             if (result.result == Results.Success)
                 return Ok(new { Status = "ok", Message = result.message, Content = request });
             else if (result.result == Results.Failed)

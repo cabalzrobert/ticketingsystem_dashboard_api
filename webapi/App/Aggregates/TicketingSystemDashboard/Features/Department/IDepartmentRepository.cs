@@ -17,6 +17,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
     public interface IDepartmentRepository
     {
         Task<(Results result, String message)> SaveDepartmentAsyn(DepartmentModel request);
+        Task<(Results result, String message)> UpdateDepartmentAsyn(DepartmentModel request);
         Task<(Results result, object dept)> LoadDepartmentAsync(FilterRequest req);
     }
     public class DepartmentRepository:IDepartmentRepository
@@ -69,6 +70,33 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
             });
             if (results != null)
                 return (Results.Success, TickectingSubscriberDto.GetDepartmentList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, string message)> UpdateDepartmentAsyn(DepartmentModel request)
+        {
+            var result = _repo.DSpQuery<dynamic>($"dbo.spfn_LAE0003", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", request.DepartmentID},
+                {"parmdepartmentname", request.DepartmentName},
+                {"parmuserid", account.USR_ID}
+            }).FirstOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                //request.DepartmentID = row["DEPT_ID"].Str();
+                string ResultCode = row["RESULT"].Str();
+                if (ResultCode == "1")
+                {
+                    return (Results.Success, "Successfully save.");
+                }
+                else if (ResultCode == "2")
+                    return (Results.Success, "Already Exist");
+                else if (ResultCode == "0")
+                    return (Results.Failed, "Please check data. Try again");
+            }
             return (Results.Null, null);
         }
     }

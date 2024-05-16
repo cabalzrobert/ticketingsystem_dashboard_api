@@ -1361,6 +1361,39 @@ namespace webapi.App.Aggregates.Common
             o.GovernmentID_NM = data["GOVERNMENTID"].Str();
             return o;
         }
+
+
+        public static IDictionary<string, object> RequestTicketNotification(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            //3
+            o.PL_ID = data["PL_ID"].Str();
+            o.PGRP_ID = data["PGRP_ID"].Str();
+            o.Userid = data["USR_ID"].Str();
+
+            //10
+            o.Firstname = textInfo.ToTitleCase(data["FRST_NM"].Str());
+            o.Lastname = textInfo.ToTitleCase(data["LST_NM"].Str());
+            o.Middlename = textInfo.ToTitleCase(data["MDL_NM"].Str());
+            o.AccountName = textInfo.ToTitleCase(data["FLL_NM"].Str());
+            o.MobileNumber = data["MOB_NO"].Str();
+            o.ProfileImageUrl = data["IMG_URL"].Str();
+            o.TransactionNo = data["TRN_NO"].Str();
+            o.TicketNo = data["TCKT_NO"].Str();
+            o.Subject = data["SBJCT"].Str();
+            o.Body = data["BODY"].Str();
+            //8
+            o.Status = data["STAT"].Str();
+            o.StatusName = data["STAT_NM"].Str();
+            o.CorrectiveAction = data["COR_ACTION"].Str();
+            o.DateReceived = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
+            o.ProcessDate = (data["PRCS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["PRCS_TRN_TS"].Str()).ToString("MMM dd, yyyy");
+            o.ActionDate = (data["FXD_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["FXD_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
+            o.TotalAttachment = (data["TTL_ATTCHMNT"].Str() == "0") ? "" : data["TTL_ATTCHMNT"].Str();
+            o.Attachment = (data["ATTCHMNT"].Str() == "0") ? "" : data["ATTCHMNT"].Str();
+            return o;
+        }
     }
 
 }

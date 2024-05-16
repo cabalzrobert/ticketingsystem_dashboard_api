@@ -10,7 +10,7 @@ using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 
 namespace webapi.Controllers.SubscriberAppControllers.Features
 {
-    [Route("app/v1/stl")]
+    [Route("app/v1/ticketingdashboard")]
     [ApiController]
     [ServiceFilter(typeof(SubscriberAuthenticationGETAttribute))]
     public class SubscriberWsController : ControllerBase

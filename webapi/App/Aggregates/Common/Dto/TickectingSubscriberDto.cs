@@ -37,5 +37,191 @@ namespace webapi.App.Aggregates.Common.Dto
             o.DepartmentName = data["DEPT_DESCR"].Str();
             return o;
         }
+
+        public static IEnumerable<dynamic> GetCategoryList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetCategory_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetCategory_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_Category_List(e));
+        }
+        public static IDictionary<string, object> Get_Category_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.CategoryID = data["CATID"].Str();
+            o.Categoryname = data["CAT_DESCR"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetPositionList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetPosition_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetPosition_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_Position_List(e));
+        }
+        public static IDictionary<string, object> Get_Position_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.PositionID = data["POSID"].Str();
+            o.Positionname = data["POS_DESCR"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetRolesList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetRoles_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetRoles_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_Roles_List(e));
+        }
+        public static IDictionary<string, object> Get_Roles_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.RolesID = data["ROLEID"].Str();
+            o.Rolesname = data["ROLE_DESCR"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetUsserAccountList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetUsserAccount_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetUsserAccount_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_UsserAccount_List(e));
+        }
+        public static IDictionary<string, object> Get_UsserAccount_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.GroupID = data["PGRP_ID"].Str();
+            o.UserAccountID = data["USR_ID"].Str();
+            o.AccountID = data["ACT_ID"].Str();
+            o.ProfilePicture = data["PRF_PIC"].Str();
+            o.ImageURL = data["IMG_URL"].Str();
+            o.Firstname = data["FRST_NM"].Str();
+            o.Middlename = data["MDL_NM"].Str();
+            o.Lastname = data["LST_NM"].Str();
+            o.Name = data["FLL_NM"].Str();
+            o.Birthdate = data["BRT_DT"].Str();
+            o.MobileNumber = data["MOB_NO"].Str();
+            o.DepartmentID = data["DEPT_ID"].Str();
+            o.Department = data["DEPT_DESCR"].Str();
+            o.RolesID = data["ROLES_ID"].Str();
+            o.Role = data["ROLE_DESCR"].Str();
+            o.PositionID = data["POS_ID"].Str();
+            o.Position = data["POS_DESCR"].Str();
+            o.Gender = data["GNDR"].Str();
+            o.Gendername = data["GNDR_NM"].Str();
+            o.HomeAddress = data["HM_ADDR"].Str();
+            o.Address = data["PRSNT_ADDR"].Str();
+            o.LastSeen = data["LST_LOG_IN"].Str();
+            o.isCommunicator = data["isCommunicator"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetRequestTicket_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetRequestTicket_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_RequestTicket_List(e));
+        }
+        public static IDictionary<string, object> Get_RequestTicket_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.Branch_ID = data["PGRP_ID"].Str();
+            o.Requestorname = data["FLL_NM"].Str();
+            o.RequestorEmail = data["EML_ADD"].Str();
+            o.RequestorMobileNumber = data["MOB_NO"].Str();
+            o.RequestorProfPic = data["IMG_URL"].Str();
+            o.TransactionNo = data["TRN_NO"].Str();
+            o.TicketNo = data["TCKT_NO"].Str();
+            o.TicketTitle = data["SBJCT"].Str();
+            o.TicketDescription = data["BODY"].Str();
+            o.Status = data["STAT"].Str();
+            o.Statusname = data["STAT_NM"].Str();
+            o.TicketStatus = data["TCKT_STAT"].Str();
+            o.TicketStatusname = data["TCKT_STAT_NM"].Str();
+            o.Category = data["CATEGORY"].Str();
+            o.Categoryname = data["CAT_DESCR"].Str();
+            o.PriorityLevel = data["PRIORITY_LVL"].Str();
+            o.PriorityLevelname = data["PRIORITY_LVL_NM"].Str();
+            o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("dd MMM yyyy");
+            o.AssignedAccount = data["AssignedAccount"].Str();
+            o.AssignedAccountname = data["AssignedAccountname"].Str();
+            o.isAssigned = data["isAssigned"].Str();
+            o.Attachment = data["AssignedAccountname"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetTicketCommentList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetTicketComment_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetTicketComment_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_TicketComment_List(e));
+        }
+        public static IDictionary<string, object> Get_TicketComment_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            //o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.Branch_ID = data["PGRP_ID"].Str();
+            o.CommentID = data["COMMNT_ID"].Str();
+            o.TransactionNo = data["TRN_NO"].Str();
+            o.SenderID = data["SNDR_ID"].Str();
+            o.DisplayName = data["DSPLY_NM"].Str();
+            o.ProfilePicture = data["PROF_IMG_URL"].Str();
+            o.Message = data["MSG"].Str();
+            o.isImage = (data["S_IMG"].Str() == "") ? false : Convert.ToBoolean(data["S_IMG"].Str());
+            o.isFile = (data["S_FILE"].Str() == "") ? false : Convert.ToBoolean(data["S_FILE"].Str());
+            o.CommentDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM dd yyy hh:mm tt");
+            o.isRead = (data["isRead"].Str() == "") ? false : Convert.ToBoolean(data["isRead"].Str());
+            o.IsYou = (data["isYou"].Str() == "") ? false : Convert.ToBoolean(data["isYou"].Str());
+            o.ImageAttachment = data["IMG_Atachment"].Str();
+            o.FileAttachment = data["FILE_Atachment"].Str();
+            o.isMessage = (data["isMessage"].Str() == "") ? false : Convert.ToBoolean(data["isMessage"].Str());
+            return o;
+        }
     }
 }

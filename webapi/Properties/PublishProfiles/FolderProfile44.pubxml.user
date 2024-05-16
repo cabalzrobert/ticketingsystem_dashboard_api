@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\WWW\ticketing_system_dashboard_api\publish</_PublishTargetUrl>
+    <History>True|2024-05-14T04:35:02.9930955Z;True|2024-05-14T12:34:59.0248089+08:00;False|2024-05-14T12:34:33.3536367+08:00;True|2024-05-14T09:59:59.7926511+08:00;True|2024-05-13T12:31:05.0056766+08:00;True|2024-05-13T12:19:46.8363575+08:00;True|2024-05-13T09:39:58.4370721+08:00;True|2024-05-13T09:32:39.2746668+08:00;True|2024-05-13T08:22:02.0689492+08:00;True|2024-05-13T08:17:25.0183138+08:00;</History>
+  </PropertyGroup>
+</Project>

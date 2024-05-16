@@ -91,7 +91,7 @@ namespace webapi.App.Model.User
         public string GNDR;
         public string MRTL_STAT;
         public string ImageUrl;
-        public string BRT_DT;
+        public string BRT_DT;   
         public string OCCPTN;
         public string SKLLS;
         public string PRF_PIC;
@@ -103,6 +103,7 @@ namespace webapi.App.Model.User
         public bool sActive;
         public bool IsSessionExpired;
         public bool IsLogin;
+        public bool isCommunicator;
 
         public string PROFILE_ID;
         public string CAN_CREATE;

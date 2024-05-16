@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace webapi.Controllers.SubscriberAppControllers.Features
 {
-    [Route("app/v1/stl/support")]
+    [Route("app/v1/ticketingdashboard/support")]
     [ApiController]
     [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
     public class AppSupportController : ControllerBase

@@ -9,7 +9,7 @@ using Comm.Commons.Extensions;
 
 namespace webapi.Controllers.SubscriberAppControllers.Features
 {
-    [Route("app/v1/stldashboard")]
+    [Route("app/v1/ticketingdashboard")]
     [ApiController]
     [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
     public class NotificationController : ControllerBase
