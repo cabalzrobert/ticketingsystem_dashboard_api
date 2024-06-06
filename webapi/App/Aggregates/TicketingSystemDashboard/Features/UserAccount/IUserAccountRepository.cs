@@ -50,6 +50,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmprofilepictureURL", request.IMGURL},
                 {"@parmusername", ""},
                 {"parmcommunication", request.isCommunicator},
+                {"parmcommunication", request.isDeptartmentHead},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)

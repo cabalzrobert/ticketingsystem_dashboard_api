@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 using System.Text;
 using System.Collections.Specialized;
-using Microsoft.IdentityModel.Tokens; 
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
@@ -31,32 +31,37 @@ namespace webapi.App.Features.UserFeature
 {
     [Service.Singleton]
     public class Pusher
-    {   
+    {
         public static string PublicKey = "0123456789ABCDEF";
         public static string UrlHost = "localhost";
         public Pusher(IConfiguration config
             // register other singleton class
-            , StompPusher stomp){
+            , StompPusher stomp)
+        {
             Pusher.UrlHost = config["Pusher:Localhost"].Str();
             Pusher.PublicKey = config["Pusher:Key"].Str();
         }
 
-        public static async Task<bool> PushAsync(string topic, object data){
+        public static async Task<bool> PushAsync(string topic, object data)
+        {
             string body = "";
-            if(data != null){
-                if(data is String) body = (data as string);
+            if (data != null)
+            {
+                if (data is String) body = (data as string);
                 else body = JsonConvert.SerializeObject(data);
             }
-            if(body.IsEmpty())return false;
+            if (body.IsEmpty()) return false;
             var json = JsonConvert.SerializeObject(new { topic = topic, body = body });
             data = Encoding.UTF8.GetBytes(json);   //Encoding.ASCII
-            Timeout.Set(async()=>await SendAsync($"http://{UrlHost}/v1/{PublicKey}", data as byte[]), 75);
+            Timeout.Set(async () => await SendAsync($"http://{UrlHost}/v1/{PublicKey}", data as byte[]), 75);
             json = null; body = null;
             return true;
         }
-        public static async Task<bool> SendAsync(string url, byte[] data, int retry = 2){
+        public static async Task<bool> SendAsync(string url, byte[] data, int retry = 2)
+        {
             WebRequest request = null;
-            try{
+            try
+            {
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 request = WebRequest.Create(new Uri(url));
                 request.Method = "POST";
@@ -68,11 +73,15 @@ namespace webapi.App.Features.UserFeature
                     response.Close();
                 data.Clear();
                 return true;
-            }catch(Exception e){
-                if(retry>0)
-                    return await SendAsync(url, data, (retry-1));
+            }
+            catch (Exception e)
+            {
+                if (retry > 0)
+                    return await SendAsync(url, data, (retry - 1));
                 data.Clear();
-            }finally{
+            }
+            finally
+            {
                 request = null;
             }
             return false;
@@ -80,15 +89,15 @@ namespace webapi.App.Features.UserFeature
     }
 }
 
-        /*public static async Task<bool> PushAsync(string topic, object data){
-            string body = "";
-            if(data != null){
-                if(data is String) body = (data as string);
-                else body = JsonConvert.SerializeObject(data);
-            }
-            if(body.IsEmpty())return false;
-            return await SendAsync(topic, body);
-        }*/
+/*public static async Task<bool> PushAsync(string topic, object data){
+    string body = "";
+    if(data != null){
+        if(data is String) body = (data as string);
+        else body = JsonConvert.SerializeObject(data);
+    }
+    if(body.IsEmpty())return false;
+    return await SendAsync(topic, body);
+}*/
 /*
 
         public static async Task<bool> SendAsync(string topic, string body, int retry = 2){

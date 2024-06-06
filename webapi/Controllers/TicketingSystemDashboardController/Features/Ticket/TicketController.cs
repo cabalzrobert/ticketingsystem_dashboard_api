@@ -82,5 +82,40 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             }
             return NotFound();
         }
+
+
+        [HttpPost]
+        [Route("count")]
+        public async Task<IActionResult> TaskTicketCount()
+        {
+            //request.FileAttachment = "";
+            var result = await _repo.LoadCntTicketAsync();
+            if (result.result == Results.Success)
+            {
+                return Ok(new { Status = "ok", TicketCount = result.cntticket });
+            }
+            if (result.result == Results.Failed)
+            {
+                return Ok(new { Status = "error", TicketCount = result.cntticket });
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("test/notify")]
+        public async Task<IActionResult> TestNotify()
+        {
+            //request.FileAttachment = "";
+            var result = await _repo.TestNotificationAsyn();
+            if (result.result == Results.Success)
+            {
+                return Ok(new { Status = "ok", Message = result.message });
+            }
+            if (result.result == Results.Failed)
+            {
+                return Ok(new { Status = "error", Message = result.message });
+            }
+            return NotFound();
+        }
     }
 }

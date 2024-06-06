@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ShowAllFiles>true</ShowAllFiles>
     <ActiveDebugProfile>webapi</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>D:\SourceTree_Dashboard\Ticketing_Dashboard_API\webapi\Properties\PublishProfiles\FolderProfile45.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\SourceTree_Dashboard\Ticketing_Dashboard_API\webapi\Properties\PublishProfiles\FolderProfile51.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

@@ -144,13 +144,22 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Address = data["PRSNT_ADDR"].Str();
             o.LastSeen = data["LST_LOG_IN"].Str();
             o.isCommunicator = data["isCommunicator"].Str();
+            o.isDeptartmentHead = data["isDeptHead"].Str();
             return o;
         }
 
-        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, bool fullinfo = true)
+        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, int limit = 1, bool fullinfo = true)
         {
             if (data == null) return null;
             var items = GetRequestTicket_List(data);
+            var count = items.Count();
+            if (count >= limit)
+            {
+                var o = items.Last();
+                var filter = (o.NextFilter = Dynamic.Object);
+                items = items.Take(count - 1).Concat(new[] { o });
+                filter.NextFilter = o.Num_Row;
+            }
             return items;
         }
         public static IEnumerable<dynamic> GetRequestTicket_List(IEnumerable<dynamic> data, bool fullinfo = true)
@@ -171,7 +180,7 @@ namespace webapi.App.Aggregates.Common.Dto
             o.RequestorProfPic = data["IMG_URL"].Str();
             o.TransactionNo = data["TRN_NO"].Str();
             o.TicketNo = data["TCKT_NO"].Str();
-            o.TicketTitle = data["SBJCT"].Str();
+            o.TitleTicket = data["SBJCT"].Str();
             o.TicketDescription = data["BODY"].Str();
             o.Status = data["STAT"].Str();
             o.Statusname = data["STAT_NM"].Str();
@@ -186,6 +195,16 @@ namespace webapi.App.Aggregates.Common.Dto
             o.AssignedAccountname = data["AssignedAccountname"].Str();
             o.isAssigned = data["isAssigned"].Str();
             o.Attachment = data["AssignedAccountname"].Str();
+            o.isRead = Convert.ToBoolean(data["S_OPN"]);
+            return o;
+        }
+
+        public static IDictionary<string, object> LoadCountComment(IDictionary<string, object> data, bool fullinfo = true)
+        {
+            dynamic o = Dynamic.Object;
+            o.Pending = data["Pending"].Str();
+            o.Resolve = data["Resolve"].Str();
+            o.AllTicketCount = data["AllTicket"].Str();
             return o;
         }
 

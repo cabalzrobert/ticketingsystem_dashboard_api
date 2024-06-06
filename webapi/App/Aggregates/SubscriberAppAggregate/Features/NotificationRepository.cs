@@ -22,6 +22,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         Task<(Results result, object items)> NotificationAsync(FilterRequest filter);
         Task<(Results result, object obj)> SeenAsync(String NotificationID);
         Task<(Results result, object count)> UnseenCountAsync();
+        Task<(Results result, object count)> LastTransactionNo();
     }
 
     public class NotificationRepository : INotificationRepository
@@ -65,6 +66,21 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 return (Results.Success, row["UN_OPN"].Str());
             }
             return (Results.Null, null); 
+        }
+
+        public async Task<(Results result, object count)> LastTransactionNo()
+        {
+            var result = _repo.DSpQueryMultiple("dbo.spfn_0AA0AB0D", new Dictionary<string, object>(){
+                { "parmcompid", account.PL_ID },
+                { "parmbrcd", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+            }).ReadSingleOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                return (Results.Success, row["TRN_NO"].Str());
+            }
+            return (Results.Null, null);
         }
     }
 }

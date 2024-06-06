@@ -54,6 +54,7 @@ namespace webapi.App.Model.User
         public string ProfilePicture;
         public string IMGURL;
         public int isCommunicator;
+        public int isDeptartmentHead;
     }
     public class TicketModel 
     {
@@ -69,6 +70,9 @@ namespace webapi.App.Model.User
         public string IssuedDate;
         public string Status;
         public string Statusname;
+        public string CreatedDate;
+        public string TicketStatusname;
+        public string TicketStatus;
     }
     public class TicketCommentModel
     {

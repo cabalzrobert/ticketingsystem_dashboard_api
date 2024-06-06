@@ -21,6 +21,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         Task<(Results result, object ticket)> LoadPendingTicketAsync(FilterRequest req);
         Task<(Results result, object comment)> LoadTicketComment(string TransactioNo);
         Task<(Results result, String message)> SendCommentAsyn(TicketCommentModel request);
+        Task<(Results result, object cntticket)> LoadCntTicketAsync();
+        Task<(Results result, String message)> TestNotificationAsyn();
     }
     public class TicketRepository:ITicketRepository
     {
@@ -57,8 +59,11 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     request.TransactionNo = row1["TRN_NO"].Str();
                     request.TicketNo = row1["TCKT_NO"].Str();
                     request.IssuedDate = row1["RGS_TRN_TS"].Str();
+                    request.CreatedDate = Convert.ToDateTime(row1["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy");
                     request.Status = row1["STAT"].Str();
                     request.Statusname = row1["STAT_NM"].Str();
+                    request.TicketStatus = row1["STAT"].Str();
+                    request.TicketStatusname = row1["STAT_NM"].Str();
                     await PostTicketRequest(result);
                     return (Results.Success, "Successfully save.");
                 }
@@ -70,7 +75,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 
         public async Task<bool> PostTicketRequest(IDictionary<string, object> data)
         {
-            await Pusher.PushAsync($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator",
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/1/ticketrequest/iscommunicator/",
                 new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data) });
             return true;
 
@@ -78,6 +83,17 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             //    , new { type = "app-update", content = data });
             //return false;
         }
+
+        //public async Task<bool> PostTicketRequest(object data)
+        //{
+        //    await Pusher.PushAsync($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator",
+        //        new { type = "communicator-notification", content = data });
+        //    return true;
+
+        //    //await Pusher.PushAsync($"/{account.PL_ID}/{account.PGRP_ID}/notify"
+        //    //    , new { type = "app-update", content = data });
+        //    //return false;
+        //}
 
         public async Task<(Results result, object ticket)> LoadPendingTicketAsync(FilterRequest req)
         {
@@ -93,7 +109,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 
             });
             if (results != null)
-                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results));
+                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 1));
             return (Results.Null, null);
         }
 
@@ -139,11 +155,40 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 request.CommentDate = Convert.ToDateTime(row1["RGS_TRN_TS"].Str()).ToString("MMM dd yyyy HH:mm tt");
                 if (ResultCode == "1")
                 {
+                    /*
+                    function to send comment to communicator or department head
+                    */
                     return (Results.Success, "Successfully send");
                 }
                 else if (ResultCode == "0")
                     return (Results.Failed, "Please check message. Try again");
             }
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, string message)> TestNotificationAsyn()
+        {
+            this.Stranger_Connection_Request();
+            return (Results.Success, "Successfully Notify");
+        }
+
+        public async Task<bool> Stranger_Connection_Request()
+        {
+            await Pusher.PushAsync($"/{account.PL_ID}/test/notify"
+                , new { type = "test-notification", content = "Test Notification" });
+            return false;
+        }
+
+        public async Task<(Results result, object cntticket)> LoadCntTicketAsync()
+        {
+            var results = _repo.DSpQueryMultiple($"dbo.spfn_AEARP0D", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmuserid", account.USR_ID},
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.LoadCountComment(results.ReadSingleOrDefault()));
             return (Results.Null, null);
         }
     }

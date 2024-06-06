@@ -80,12 +80,15 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
             stack.subscribe($"{account.PL_ID}/{account.PGRP_ID}/issuesandconern", this.receivedBranchIssuesandConcernNotification);
             stack.subscribe($"{account.PL_ID}/{account.PGRP_ID}/requestdocument", this.receivedBranchRequestDocumentNotification);
             stack.subscribe($"{account.PL_ID}/{account.PGRP_ID}/complaint", this.receivedBranchComplaintNotification);
-            stack.subscribe($"/{account.PL_ID}/notify", this.receivedCompanyNotication);
+            //stack.subscribe($"/{account.PL_ID}/notify", this.receivedCompanyNotication);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/chat", this.receivedBranchPublicChat);
-            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/notify", this.receivedBranchNotication);
+            //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/notify", this.receivedNotication);
+            stack.subscribe($"/{account.PL_ID}/test/notify", this.receivedNotication);
 
 
-            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isCommunicator)}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isDeptartmentHead)}/forwarded/isdepthead", this.receivedTicketForwadedDeptHead);
+            //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
 
             //stack.subscribe($"/{account.CompanyID}/{account.BranchID}/arena", this.receivedBranchArena);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/chat", this.receivedSubscriberChat);
@@ -139,9 +142,17 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         private void receivedBranchNotication(Ultralight.StompMessage message){
             stomp("/branch", message.Body);
         }
+        private void receivedNotication(Ultralight.StompMessage message)
+        {
+            stomp("/test/notify", message.Body);
+        }
         private void receivedTicketRequestCommunicator(Ultralight.StompMessage message)
         {
-            stomp("/ticketrequest/iscommunicator", message.Body);
+            stomp("/1/ticketrequest/iscommunicator", message.Body);
+        }
+        private void receivedTicketForwadedDeptHead(Ultralight.StompMessage message)
+        {
+            stomp("/1/forwarded/isdepthead", message.Body);
         }
         private void receivedBranchArena(Ultralight.StompMessage message){
             stomp("/arena", message.Body);

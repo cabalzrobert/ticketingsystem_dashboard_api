@@ -97,7 +97,12 @@ namespace webapi.App.Features.UserFeature
                 }
                 return false;
             }
-            this.client.Subscribe(destination, (message)=>distribute(subscription, message));
+            //this.client.Subscribe(destination, (message)=>distribute(subscription, message));
+            try
+            {
+                this.client.Subscribe(destination, (message) => distribute(subscription, message));
+            }
+            catch { }
             return false;
         }
 

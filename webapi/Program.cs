@@ -14,15 +14,15 @@ namespace webapi
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
-            /*
+            //CreateWebHostBuilder(args).Build().Run();
+            
             var configuration = new ConfigurationBuilder()
                     .AddCommandLine(args)
                     .Build();
 
             var hostUrl = configuration["hosturl"];
             if (string.IsNullOrEmpty(hostUrl))
-                hostUrl = "http://localhost:8090";
+                hostUrl = "http://localhost:5000";
 
             var host = new WebHostBuilder()
                 .UseKestrel()
@@ -34,7 +34,7 @@ namespace webapi
                 .Build();
 
             host.Run();
-            */
+            
             
         }
 

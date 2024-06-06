@@ -49,5 +49,15 @@ namespace webapi.Controllers.SubscriberAppControllers.Features
                 return Ok(repoResult.count);
             return NotFound();
         }
+
+        [HttpPost]
+        [Route("lasttransactionno")]
+        public async Task<IActionResult> LastTransactionNo()
+        {
+            var repoResult = await _notifyRepo.LastTransactionNo();
+            if (repoResult.result == Results.Success)
+                return Ok(repoResult.count);
+            return NotFound();
+        }
     }
 }

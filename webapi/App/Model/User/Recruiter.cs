@@ -104,6 +104,7 @@ namespace webapi.App.Model.User
         public bool IsSessionExpired;
         public bool IsLogin;
         public bool isCommunicator;
+        public bool isDeptartmentHead;
 
         public string PROFILE_ID;
         public string CAN_CREATE;
@@ -113,4 +114,5 @@ namespace webapi.App.Model.User
         public string RQRD_CHNG_PSSWRD;
         public string TRGR_CHNG_PSSWRD;
     }
+    
 }
