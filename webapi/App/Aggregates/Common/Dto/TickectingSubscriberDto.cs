@@ -230,6 +230,7 @@ namespace webapi.App.Aggregates.Common.Dto
             o.TransactionNo = data["TRN_NO"].Str();
             o.SenderID = data["SNDR_ID"].Str();
             o.DisplayName = data["DSPLY_NM"].Str();
+            o.Department = data["DEPT_DESCR"].Str();
             o.ProfilePicture = data["PROF_IMG_URL"].Str();
             o.Message = data["MSG"].Str();
             o.isImage = (data["S_IMG"].Str() == "") ? false : Convert.ToBoolean(data["S_IMG"].Str());
