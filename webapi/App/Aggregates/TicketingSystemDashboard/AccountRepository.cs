@@ -17,6 +17,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
     public interface IAccountRepository
     {
         Task<(Results result, String message, TicketingUser account)> DashboardSignInAsync(TicketingSignInRequest request);
+        Task<(Results result, string message, string userId)> NewUserLogin(string username);
+        Task<(Results result, string message, string otp)> SendOTP(SendOtp sendOtp);
+        Task<(Results result, string message)> SetPassword(SetPassword setPassword);
     }
     public class AccountRepository:IAccountRepository
     {
@@ -76,6 +79,60 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                 return (Results.Failed, "Invalid username and password! Please try again", null);
             }
             return (Results.Null, null, null);
+        }
+
+        public async Task<(Results result, string message, string userId)> NewUserLogin(string username)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_FIRSTLOGIN", new Dictionary<string, object>()
+            {
+                {"parmusername", username},
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+                return (Results.Success, "Success", row["USR_ID"].Str());
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed", null);
+            return (Results.Null, null, null);
+
+        }
+
+        public async Task<(Results result, string message, string otp)> SendOTP(SendOtp sendOtp)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_SENDOTP", new Dictionary<string, object>()
+            {
+                {"parmusrid", sendOtp.UserId},
+                {"parmmobno", sendOtp.MobileNumber}
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+                return (Results.Success, "Success", row["OTP"].Str());
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed", null);
+            return (Results.Null, null, null);
+
+        }
+
+        public async Task<(Results result, string message)> SetPassword(SetPassword setPassword)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_SETPASSWORD", new Dictionary<string, object>()
+            {
+                {"parmuserid", setPassword.UserId},
+                {"parmmobno", setPassword.MobileNumber},
+                {"parmpassword", setPassword.Password}
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+                return (Results.Success, "Success");
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed");
+            return (Results.Null, null);
+
         }
     }
 }

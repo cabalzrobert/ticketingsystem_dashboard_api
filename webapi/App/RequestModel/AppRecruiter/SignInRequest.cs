@@ -41,4 +41,17 @@ namespace webapi.App.RequestModel.AppRecruiter
         public string plid;
         public string groupid;
     }
+
+    public class SendOtp
+    {
+        public string UserId;
+        public string MobileNumber;
+    }
+
+    public class SetPassword
+    {
+        public string UserId;
+        public string MobileNumber;
+        public string Password;
+    }
 }

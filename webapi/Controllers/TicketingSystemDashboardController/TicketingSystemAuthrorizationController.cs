@@ -45,6 +45,43 @@ namespace webapi.Controllers.TicketingSystemDashboardController
             return NotFound();
         }
 
+        [HttpPost]
+        [Route("newUserLogin")]
+        public async Task<IActionResult> NewUserLogin(string username)
+        {
+            Console.WriteLine(username);
+            var result = await _repo.NewUserLogin(username);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", Message = result.message, UserId = result.userId });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", Message = result.message });
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("otp")]
+        public async Task<IActionResult> SendOTP([FromBody] SendOtp sendOtp)
+        {
+            var result = await _repo.SendOTP(sendOtp);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", Message = result.message, Otp = result.otp });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", Message = result.message });
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("setPassword")]
+        public async Task<IActionResult> SetPassword([FromBody] SetPassword setPassword)
+        {
+            var result = await _repo.SetPassword(setPassword);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", Message = result.message });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", Message = result.message });
+            return BadRequest();
+        }
+
         private object CreateToken(TicketingUser user)
         {
             var guid = Guid.NewGuid().ToString();
