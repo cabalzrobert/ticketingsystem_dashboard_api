@@ -43,6 +43,25 @@ namespace webapi.App.TSDashboardModel
         public string EmailAddress;
         public string UserID;
     }
-    
+
+    public class TicketInfo
+    {
+        public string ticketNo;
+        public string requestId;
+        public string categoryId;
+        public string title;
+        public string description;
+        public string[] attachment;
+        public Int16 priorityLevel;
+        public string forwardDepartment;
+        public string forwardTo;
+        public string forwardRemarks;
+        public string assignedDepartment;
+        public string assignedTo;
+        public Int16 status;
+        public string commentId;
+        public Int16 permission;
+    }
+
 }
 
