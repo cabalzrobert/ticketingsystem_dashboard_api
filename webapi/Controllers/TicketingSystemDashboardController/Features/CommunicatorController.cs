@@ -77,5 +77,21 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
                 return Ok(result.comments);
             return BadRequest();
         }
+        [HttpPost]
+        [Route("count")]
+        public async Task<IActionResult> TaskTicketCount()
+        {
+            //request.FileAttachment = "";
+            var result = await _repo.LoadCntTicketAsync();
+            if (result.result == Results.Success)
+            {
+                return Ok(new { Status = "ok", TicketCount = result.cntticket });
+            }
+            if (result.result == Results.Failed)
+            {
+                return Ok(new { Status = "error", TicketCount = result.cntticket });
+            }
+            return NotFound();
+        }
     }
 }

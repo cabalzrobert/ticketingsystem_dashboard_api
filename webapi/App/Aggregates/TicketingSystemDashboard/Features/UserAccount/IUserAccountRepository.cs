@@ -96,6 +96,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmaddress", request.Address},
                 {"parmprofilepictureURL", request.IMGURL},
                 {"parmcommunication", request.isCommunicator},
+                {"parmDepartmenthead", request.isDeptartmentHead},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)

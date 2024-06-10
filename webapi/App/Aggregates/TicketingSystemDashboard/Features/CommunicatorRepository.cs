@@ -8,6 +8,7 @@ using Comm.Commons.Extensions;
 using webapi.App.TSDashboardModel;
 using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
+using webapi.App.Aggregates.Common.Dto;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -19,11 +20,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ConfirmationForwardTicket(TicketInfo ticket);
         Task<(Results result, object comments)> GetComments(string transactionNo);
+        Task<(Results result, object cntticket)> LoadCntTicketAsync();
     }
     public class CommunicatorRepository : ICommunicatorRepository
     {
-        private static ISubscriber _account;
-        private static IRepository _repo;
+        private readonly ISubscriber _account;
+        private readonly IRepository _repo;
         private TicketingUser account { get { return _account.AccountIdentity(); } }
         public CommunicatorRepository(IRepository repo, ISubscriber account)
         {
@@ -134,6 +136,18 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 return (Results.Success, results);
             return (Results.Failed, null);
 
+        }
+
+        public async Task<(Results result, object cntticket)> LoadCntTicketAsync()
+        {
+            var results = _repo.DSpQueryMultiple($"dbo.spfn_AEARP0E", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID}
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.LoadCountTicketCommunicator(results.ReadSingleOrDefault()));
+            return (Results.Null, null);
         }
     }
 }

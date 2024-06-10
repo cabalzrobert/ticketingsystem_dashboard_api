@@ -85,6 +85,7 @@ namespace webapi
             app.GetFileExplorerServices();
             //
             app.UseWebSockets();
+            app.UseStaticFiles();
             //
             app.UseResponseCaching();
             // default code

@@ -1367,31 +1367,65 @@ namespace webapi.App.Aggregates.Common
         {
             dynamic o = Dynamic.Object;
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            //3
-            o.PL_ID = data["PL_ID"].Str();
-            o.PGRP_ID = data["PGRP_ID"].Str();
-            o.Userid = data["USR_ID"].Str();
+            o.requestId = data["requestId"].Str();
+            o.requestName = data["requestName"].Str();
+            o.requestUsername = data["requestUsername"].Str();
+            o.transactionNo = data["transactionNo"].Str();
+            o.ticketNo = data["ticketNo"].Str();
+            o.categoryId = data["categoryId"].Str();
 
-            //10
-            o.Firstname = textInfo.ToTitleCase(data["FRST_NM"].Str());
-            o.Lastname = textInfo.ToTitleCase(data["LST_NM"].Str());
-            o.Middlename = textInfo.ToTitleCase(data["MDL_NM"].Str());
-            o.AccountName = textInfo.ToTitleCase(data["FLL_NM"].Str());
-            o.MobileNumber = data["MOB_NO"].Str();
-            o.ProfileImageUrl = data["IMG_URL"].Str();
-            o.TransactionNo = data["TRN_NO"].Str();
-            o.TicketNo = data["TCKT_NO"].Str();
-            o.Subject = data["SBJCT"].Str();
-            o.Body = data["BODY"].Str();
-            //8
-            o.Status = data["STAT"].Str();
-            o.StatusName = data["STAT_NM"].Str();
-            o.CorrectiveAction = data["COR_ACTION"].Str();
-            o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
-            o.ProcessDate = (data["PRCS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["PRCS_TRN_TS"].Str()).ToString("MMM dd, yyyy");
-            o.ActionDate = (data["FXD_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["FXD_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
-            o.TotalAttachment = (data["TTL_ATTCHMNT"].Str() == "0") ? "" : data["TTL_ATTCHMNT"].Str();
-            o.Attachment = (data["ATTCHMNT"].Str() == "0") ? "" : data["ATTCHMNT"].Str();
+            o.categoryName = data["categoryName"].Str();
+            o.title = data["title"].Str();
+            o.description = data["description"].Str();
+            o.priorityLevel = data["priorityLevel"].Str();
+            o.priorityName = data["priorityName"].Str();
+
+            o.forwardDepartmentId = data["forwardDepartmentId"].Str();
+            o.forwardDepartmentName = data["forwardDepartmentName"].Str();
+            o.assignedId = data["assignedId"].Str();
+            o.assignedName = data["assignedName"].Str();
+            o.departmentId = data["departmentId"].Str();
+
+            o.departmentName = data["departmentName"].Str();
+            o.isAssigned = data["isAssigned"].Str();
+            o.assignedUsername = data["assignedUsername"].Str();
+            o.forwardToId = data["forwardToId"].Str();
+            o.forwardToName = data["forwardToName"].Str();
+
+            o.forwardRemarks = data["forwardRemarks"].Str();
+            o.isForwarded = data["isForwarded"].Str();
+            o.status = data["status"].Str();
+            o.ticketStatus = data["ticketStatus"].Str();
+            o.dateCreated = data["dateCreated"].Str();
+
+            //o.Attachment = data["ATTCHMNT"].Str();
+            //o.TotalAttachment = data["TTL_ATTCHMNT"].Str();
+
+            ////3
+            //o.PL_ID = data["PL_ID"].Str();
+            //o.PGRP_ID = data["PGRP_ID"].Str();
+            //o.Userid = data["USR_ID"].Str();
+
+            ////10
+            //o.Firstname = textInfo.ToTitleCase(data["FRST_NM"].Str());
+            //o.Lastname = textInfo.ToTitleCase(data["LST_NM"].Str());
+            //o.Middlename = textInfo.ToTitleCase(data["MDL_NM"].Str());
+            //o.AccountName = textInfo.ToTitleCase(data["FLL_NM"].Str());
+            //o.MobileNumber = data["MOB_NO"].Str();
+            //o.ProfileImageUrl = data["IMG_URL"].Str();
+            //o.TransactionNo = data["TRN_NO"].Str();
+            //o.TicketNo = data["TCKT_NO"].Str();
+            //o.Subject = data["SBJCT"].Str();
+            //o.Body = data["BODY"].Str();
+            ////8
+            //o.Status = data["STAT"].Str();
+            //o.StatusName = data["STAT_NM"].Str();
+            //o.CorrectiveAction = data["COR_ACTION"].Str();
+            //o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
+            //o.ProcessDate = (data["PRCS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["PRCS_TRN_TS"].Str()).ToString("MMM dd, yyyy");
+            //o.ActionDate = (data["FXD_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["FXD_TRN_TS"].Str()).ToString("MMM, dd, yyyy");
+            //o.TotalAttachment = (data["TTL_ATTCHMNT"].Str() == "0") ? "" : data["TTL_ATTCHMNT"].Str();
+            //o.Attachment = (data["ATTCHMNT"].Str() == "0") ? "" : data["ATTCHMNT"].Str();
             return o;
         }
     }

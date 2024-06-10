@@ -23,6 +23,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         Task<(Results result, String message)> SendCommentAsyn(TicketCommentModel request);
         Task<(Results result, object cntticket)> LoadCntTicketAsync();
         Task<(Results result, String message)> TestNotificationAsyn();
+        Task<(Results result, object obj)> SeenAsync(String transactionNo);
     }
     public class TicketRepository:ITicketRepository
     {
@@ -56,14 +57,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 string ResultCode = row1["RESULT"].Str();
                 if(ResultCode == "1")
                 {
-                    request.TransactionNo = row1["TRN_NO"].Str();
-                    request.TicketNo = row1["TCKT_NO"].Str();
-                    request.IssuedDate = row1["RGS_TRN_TS"].Str();
-                    request.CreatedDate = Convert.ToDateTime(row1["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy");
-                    request.Status = row1["STAT"].Str();
-                    request.Statusname = row1["STAT_NM"].Str();
-                    request.TicketStatus = row1["STAT"].Str();
-                    request.TicketStatusname = row1["STAT_NM"].Str();
+                    request.TransactionNo = row1["transactionNo"].Str();
+                    request.TicketNo = row1["ticketNo"].Str();
+                    request.IssuedDate = row1["dateCreated"].Str();
+                    request.CreatedDate = Convert.ToDateTime(row1["dateCreated"].Str()).ToString("MMM dd, yyyy");
+                    request.Status = row1["status"].Str();
+                    request.Statusname = row1["ticketStatus"].Str();
+                    request.TicketStatus = row1["status"].Str();
+                    request.TicketStatusname = row1["ticketStatus"].Str();
                     await PostTicketRequest(result);
                     return (Results.Success, "Successfully save.");
                 }
@@ -109,7 +110,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 
             });
             if (results != null)
-                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 1));
+                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 100));
             return (Results.Null, null);
         }
 
@@ -190,6 +191,17 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             if (results != null)
                 return (Results.Success, TickectingSubscriberDto.LoadCountComment(results.ReadSingleOrDefault()));
             return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object obj)> SeenAsync(string transactionNo)
+        {
+            var result = _repo.DSpQuery<dynamic>("dbo.spfn_AEAAEA100A", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+                { "parmtransactionno", transactionNo },
+            });
+            return (Results.Success, null);
         }
     }
 }

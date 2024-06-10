@@ -117,5 +117,15 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             }
             return NotFound();
         }
+        [HttpPost]
+        [Route("communicator/{transactionNo}/seen")]
+        public async Task<IActionResult> CommunicatorSeenTicket(String transactionNo)
+        {
+            if (transactionNo.IsEmpty()) return NotFound();
+            var result = await _repo.SeenAsync(transactionNo);
+            if (result.result == Results.Success)
+                return Ok();
+            return NotFound();
+        }
     }
 }

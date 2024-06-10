@@ -148,7 +148,7 @@ namespace webapi.App.Aggregates.Common.Dto
             return o;
         }
 
-        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, int limit = 1, bool fullinfo = true)
+        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, int limit = 100, bool fullinfo = true)
         {
             if (data == null) return null;
             var items = GetRequestTicket_List(data);
@@ -205,6 +205,15 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Pending = data["Pending"].Str();
             o.Resolve = data["Resolve"].Str();
             o.AllTicketCount = data["AllTicket"].Str();
+            return o;
+        }
+
+        public static IDictionary<string, object> LoadCountTicketCommunicator(IDictionary<string, object> data, bool fullinfo = true)
+        {
+            dynamic o = Dynamic.Object;
+            o.UnAssigned = data["UN_ASSIGNED"].Str();
+            o.Assigned = data["ASSIGNED"].Str();
+            o.AllTicketCount = data["ALL_TICKET"].Str();
             return o;
         }
 
