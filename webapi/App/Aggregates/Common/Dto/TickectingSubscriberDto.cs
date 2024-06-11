@@ -148,7 +148,7 @@ namespace webapi.App.Aggregates.Common.Dto
             return o;
         }
 
-        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, int limit = 1, bool fullinfo = true)
+        public static IEnumerable<dynamic> GetRequestTicketList(IEnumerable<dynamic> data, int limit = 100, bool fullinfo = true)
         {
             if (data == null) return null;
             var items = GetRequestTicket_List(data);

@@ -96,8 +96,10 @@ namespace webapi.Controllers.TicketingSystemDashboardController
                     MOB_NO = user.MOB_NO,
                     ACT_TYP = user.ACT_TYP,
                     SUBSCRIBER_ID = user.SUBSCRIBER_ID,
+                    DEPT_ID = user.DEPT_ID,
                     isCommunicator = user.isCommunicator,
                     isDeptartmentHead = user.isDeptartmentHead
+
 
                 }), guid)),
                 new Claim(ClaimTypes.Name, user.FLL_NM),

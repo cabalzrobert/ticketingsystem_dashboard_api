@@ -109,7 +109,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 
             });
             if (results != null)
-                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 1));
+                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 100));
             return (Results.Null, null);
         }
 
