@@ -51,6 +51,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                         LST_NM = row["LST_NM"].Str(),
                         MDL_NM = row["MDL_NM"].Str(),
                         FLL_NM = row["FLL_NM"].Str(),
+                        DEPT_ID = row["DEPT_ID"].Str(),
                         MOB_NO = row["MOB_NO"].Str(),
                         EML_ADD = row["EML_ADD"].Str(),
                         HM_ADDR = row["HM_ADDR"].Str(),

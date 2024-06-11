@@ -1428,6 +1428,43 @@ namespace webapi.App.Aggregates.Common
             //o.Attachment = (data["ATTCHMNT"].Str() == "0") ? "" : data["ATTCHMNT"].Str();
             return o;
         }
+
+        public static IDictionary<string, object> ForwardedTicketNotification(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.requestId = data["requestId"].Str();
+            o.requestName = data["requestName"].Str();
+            o.requestUsername = data["requestUsername"].Str();
+            o.transactionNo = data["transactionNo"].Str();
+            o.ticketNo = data["ticketNo"].Str();
+
+            o.categoryId = data["categoryId"].Str();
+            o.categoryName = data["categoryName"].Str();
+            o.title = data["title"].Str();
+            o.description = data["description"].Str();
+            o.priorityLevel = data["priorityLevel"].Str();
+
+            o.priorityName = data["priorityName"].Str();
+            o.forwardDepartmentId = data["forwardDepartmentId"].Str();
+            o.forwardDepartmentName = data["forwardDepartmentName"].Str();
+            o.assignedId = data["assignedId"].Str();
+            o.assignedName = data["assignedName"].Str();
+
+            o.departmentId = data["departmentId"].Str();
+            o.departmentName = data["departmentName"].Str();
+            o.isAssigned = data["isAssigned"].Str();
+            o.assignedUsername = data["assignedUsername"].Str();
+            o.forwardToId = data["forwardToId"].Str();
+
+            o.forwardToName = data["forwardToName"].Str();
+            o.forwardRemarks = data["forwardRemarks"].Str();
+            o.isForwarded = data["isForwarded"].Str();
+            o.status = data["status"].Str();
+            o.ticketStatus = data["ticketStatus"].Str();
+
+            return o;
+        }
     }
 
 }

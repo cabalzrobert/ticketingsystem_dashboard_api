@@ -87,7 +87,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
 
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isCommunicator)}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
-            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isDeptartmentHead)}/forwarded/isdepthead", this.receivedTicketForwadedDeptHead);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.DEPT_ID)}/forwardticket/depthead/{account.isDeptartmentHead}", this.receivedTicketForwadedDeptHead);
             //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
 
             //stack.subscribe($"/{account.CompanyID}/{account.BranchID}/arena", this.receivedBranchArena);
