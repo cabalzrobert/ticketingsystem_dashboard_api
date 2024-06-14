@@ -16,7 +16,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
     public interface IDepartmentHeadRepository
     {
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
-        Task<(Results result, object tickets)> GetTickets(string id, int tab);
+        Task<(Results result, object tickets)> GetTickets(FilterTickets param);
         Task<(Results result, string message)> AssignedTicket(TicketInfo ticket);
         Task<(Results result, string message)> ReturnTicket(TicketInfo ticket);
         Task<(Results result, object personnels)> LoadPersonnels(string id);
@@ -24,8 +24,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
         Task<(Results result, string message)> CancelTicket(string ticketNo);
         Task<(Results result, object comments)> GetComments(string transactionNo);
+
         Task<(Results result, object cntticket)> LoadCntTicketAsync(string id);
         Task<(Results result, object count)> UnseenCountAssync(string id);
+
+        Task<(Results result, object tickets)> GetTickets(int row); // test only
+
     }
     public class DepartmentHeadRepository : IDepartmentHeadRepository
     {
@@ -62,14 +66,28 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<(Results result, object tickets)> GetTickets(string id, int tab)
+        public async Task<(Results result, object tickets)> GetTickets(FilterTickets param)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_HEADTICKETS", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
-                {"parmdepartmentid", id },
-                {"parmtab", tab }
+                {"parmdepartmentid", param.departmentId },
+                {"parmtab", param.tab },
+                {"parmrow", param.row },
+                {"parmsearch", param.search },
+            });
+            if (results != null)
+                return (Results.Success, results);
+            return (Results.Failed, null);
+
+        }
+
+        public async Task<(Results result, object tickets)> GetTickets(int row)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_TESTTABLE", new Dictionary<string, object>()
+            {
+                {"parmrow", row}
             });
             if (results != null)
                 return (Results.Success, results);
