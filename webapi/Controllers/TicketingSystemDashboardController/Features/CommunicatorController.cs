@@ -38,9 +38,9 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 
         [HttpPost]
         [Route("tickets")]
-        public async Task<IActionResult> GetTickets(int tab)
+        public async Task<IActionResult> GetTickets([FromBody] FilterTickets param)
         {
-            var result = await _repo.GetTickets(tab);
+            var result = await _repo.GetTickets(param);
             if (result.result == Results.Success)
                 return Ok(result.tickets);
             return BadRequest();

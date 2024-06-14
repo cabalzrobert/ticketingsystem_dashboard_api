@@ -63,5 +63,13 @@ namespace webapi.App.TSDashboardModel
         public Int16 permission;
     }
 
+    public class FilterTickets
+    {
+        public int tab;
+        public string departmentId;
+        public int row;
+        public string search;
+    }
+
 }
 

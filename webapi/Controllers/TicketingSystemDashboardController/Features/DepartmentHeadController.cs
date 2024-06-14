@@ -15,7 +15,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 {
     [Route("app/v1/ticketingdashboard/head")]
     [ApiController]
-    [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
+    //[ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
     public class DepartmentHeadController: ControllerBase
     {
         private readonly IDepartmentHeadRepository _repo;
@@ -39,9 +39,19 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 
         [HttpPost]
         [Route("tickets")]
-        public async Task<IActionResult> GetTickets(string id, int tab)
+        public async Task<IActionResult> GetTickets([FromBody] FilterTickets param)
         {
-            var result = await _repo.GetTickets(id,tab);
+            var result = await _repo.GetTickets(param);
+            if (result.result == Results.Success)
+                return Ok(result.tickets);
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("tickets/sample")]
+        public async Task<IActionResult> GetTickets(int row)
+        {
+            var result = await _repo.GetTickets(row);
             if (result.result == Results.Success)
                 return Ok(result.tickets);
             return BadRequest();

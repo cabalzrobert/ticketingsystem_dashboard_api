@@ -16,7 +16,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
     public interface ICommunicatorRepository
     {
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
-        Task<(Results result, object tickets)> GetTickets(int tab);
+        Task<(Results result, object tickets)> GetTickets(FilterTickets param);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ConfirmationForwardTicket(TicketInfo ticket);
         Task<(Results result, object comments)> GetComments(string transactionNo);
@@ -57,13 +57,15 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<(Results result, object tickets)> GetTickets(int tab)
+        public async Task<(Results result, object tickets)> GetTickets(FilterTickets param)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_COMTICKETS", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
-                {"parmtab", tab }
+                {"parmtab", param.tab },
+                {"parmrow", param.row },
+                {"parmsearch", param.search },
             });
             if (results != null)
                 return (Results.Success, results);
