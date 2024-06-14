@@ -18,6 +18,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
     public interface ITicketRepository
     {
         Task<(Results result, String message)> SaveTicketAsync(TicketModel request);
+        Task<(Results result, String message)> UpdateTicketAsync(TicketModel request);
         Task<(Results result, object ticket)> LoadPendingTicketAsync(FilterRequest req);
         Task<(Results result, object comment)> LoadTicketComment(string TransactioNo);
         Task<(Results result, String message)> SendCommentAsyn(TicketCommentModel request);
@@ -66,6 +67,43 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     request.TicketStatus = row1["status"].Str();
                     request.TicketStatusname = row1["ticketStatus"].Str();
                     await PostTicketRequest(result);
+                    return (Results.Success, "Successfully save.");
+                }
+                else if (ResultCode == "0")
+                    return (Results.Failed, "Please check data. Try again");
+            }
+            return (Results.Null, null);
+        }
+        public async Task<(Results result, string message)> UpdateTicketAsync(TicketModel request)
+        {
+            var result = _repo.DSpQueryMultiple("dbo.spfn_AEARP0A1", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+                { "parmsssid", account.SessionID },
+                { "armtrnno", request.TransactionNo },
+                { "parmcategory", request.Category },
+                { "parmticket", request.TicketNo },
+                { "parmsubject", request.TitleTicket },
+                { "parmbody", request.TicketDescription },
+                { "parmxattchmnt", request.iTicketAttachment },
+                { "parmprioritylevel", request.PriorityLevel }
+            }).ReadSingleOrDefault();
+            if (result != null)
+            {
+                var row1 = ((IDictionary<string, object>)result);
+                string ResultCode = row1["RESULT"].Str();
+                if (ResultCode == "1")
+                {
+                    request.TransactionNo = row1["transactionNo"].Str();
+                    request.TicketNo = row1["ticketNo"].Str();
+                    request.IssuedDate = row1["dateCreated"].Str();
+                    request.CreatedDate = Convert.ToDateTime(row1["dateCreated"].Str()).ToString("MMM dd, yyyy");
+                    request.Status = row1["status"].Str();
+                    request.Statusname = row1["ticketStatus"].Str();
+                    request.TicketStatus = row1["status"].Str();
+                    request.TicketStatusname = row1["ticketStatus"].Str();
+                    //await PostTicketRequest(result);
                     return (Results.Success, "Successfully save.");
                 }
                 else if (ResultCode == "0")
@@ -203,5 +241,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             });
             return (Results.Success, null);
         }
+
+        
     }
 }

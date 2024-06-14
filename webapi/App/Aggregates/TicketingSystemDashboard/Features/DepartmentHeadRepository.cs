@@ -8,6 +8,7 @@ using Comm.Commons.Extensions;
 using webapi.App.TSDashboardModel;
 using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
+using webapi.App.Aggregates.Common.Dto;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -23,11 +24,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
         Task<(Results result, string message)> CancelTicket(string ticketNo);
         Task<(Results result, object comments)> GetComments(string transactionNo);
+        Task<(Results result, object cntticket)> LoadCntTicketAsync(string id);
+        Task<(Results result, object count)> UnseenCountAssync(string id);
     }
     public class DepartmentHeadRepository : IDepartmentHeadRepository
     {
-        private static ISubscriber _account;
-        private static IRepository _repo;
+        private readonly ISubscriber _account;
+        private readonly IRepository _repo;
         private TicketingUser account { get { return _account.AccountIdentity(); } }
         public DepartmentHeadRepository(IRepository repo, ISubscriber account) 
         {
@@ -199,6 +202,35 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 return (Results.Success, results);
             return (Results.Failed, null);
 
+        }
+
+        public async Task<(Results result, object cntticket)> LoadCntTicketAsync(string id)
+        {
+            var results = _repo.DSpQueryMultiple($"dbo.spfn_AEARP0F", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", id},
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.LoadCountDepartmentHeadAssignedTicket(results.ReadSingleOrDefault()));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object count)> UnseenCountAssync(string id)
+        {
+            var result = _repo.DSpQueryMultiple("dbo.spfn_AEARP0G", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmdepartmentid", id },
+                { "parmuserid", account.USR_ID },
+            }).ReadSingleOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                return (Results.Success, row["UN_OPN"].Str());
+            }
+            return (Results.Null, null);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmbirthdate", request.Birthdate},
                 {"parmmobilenumber", request.MobileNumber},
                 {"parmaddress", request.Address},
-                {"parmprofilepictureURL", request.IMGURL},
+                {"parmprofilepictureURL", request.ImageUrl},
                 {"parmcommunication", request.isCommunicator},
                 {"parmDepartmenthead", request.isDeptartmentHead},
                 {"parmuserid", account.USR_ID}

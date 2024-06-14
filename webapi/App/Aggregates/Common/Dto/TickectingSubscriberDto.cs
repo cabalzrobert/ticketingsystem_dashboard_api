@@ -208,6 +208,15 @@ namespace webapi.App.Aggregates.Common.Dto
             return o;
         }
 
+        public static IDictionary<string, object> LoadCountDepartmentHeadAssignedTicket(IDictionary<string, object> data, bool fullinfo = true)
+        {
+            dynamic o = Dynamic.Object;
+            o.Unassigned = data["Unassigned"].Str();
+            o.Assigned = data["Assigned"].Str();
+            o.AllTickets = data["AllTickets"].Str();
+            return o;
+        }
+
         public static IDictionary<string, object> LoadCountTicketCommunicator(IDictionary<string, object> data, bool fullinfo = true)
         {
             dynamic o = Dynamic.Object;

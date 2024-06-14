@@ -123,5 +123,31 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
                 return Ok(result.comments);
             return BadRequest();
         }
+
+        [HttpPost]
+        [Route("ticket/count")]
+        public async Task<IActionResult> TaskTicketCount(string departmentID)
+        {
+            //request.FileAttachment = "";
+            var result = await _repo.LoadCntTicketAsync(departmentID);
+            if (result.result == Results.Success)
+            {
+                return Ok(new { Status = "ok", TicketCount = result.cntticket });
+            }
+            if (result.result == Results.Failed)
+            {
+                return Ok(new { Status = "error", TicketCount = result.cntticket });
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        [Route("notification/unseen")]
+        public async Task<IActionResult> DepartmentUnseenTicket(string departmentID)
+        {
+            var repoResult = await _repo.UnseenCountAssync(departmentID);
+            if (repoResult.result == Results.Success)
+                return Ok(repoResult.count);
+            return NotFound();
+        }
     }
 }

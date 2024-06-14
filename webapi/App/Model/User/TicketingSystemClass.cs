@@ -53,6 +53,7 @@ namespace webapi.App.Model.User
         public string Address;
         public string ProfilePicture;
         public string IMGURL;
+        public string ImageUrl;
         public int isCommunicator;
         public int isDeptartmentHead;
     }

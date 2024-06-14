@@ -9,6 +9,7 @@ using webapi.App.TSDashboardModel;
 using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
+using webapi.App.Features.UserFeature;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -91,6 +92,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //for pusher function department head receiver
+                await PostTicketRequest(results, ticket.assignedDepartment);
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -148,6 +150,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (results != null)
                 return (Results.Success, TickectingSubscriberDto.LoadCountTicketCommunicator(results.ReadSingleOrDefault()));
             return (Results.Null, null);
+        }
+        public async Task<bool> PostTicketRequest(IDictionary<string, object> data, string departmentid)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{departmentid}/forwardticket/depthead/1",
+                new { type = "departmenthead-notification", content = SubscriberDto.RequestTicketNotification(data) });
+            return true;
         }
     }
 }

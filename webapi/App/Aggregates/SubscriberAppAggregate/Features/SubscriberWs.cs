@@ -87,7 +87,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
 
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isCommunicator)}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
-            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.DEPT_ID)}/forwardticket/depthead/{account.isDeptartmentHead}", this.receivedTicketForwadedDeptHead);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/forwardticket/depthead/{Convert.ToInt32(account.isDeptartmentHead)}", this.receivedTicketForwadedDeptHead);
             //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
 
             //stack.subscribe($"/{account.CompanyID}/{account.BranchID}/arena", this.receivedBranchArena);
@@ -152,7 +152,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         }
         private void receivedTicketForwadedDeptHead(Ultralight.StompMessage message)
         {
-            stomp("/1/forwarded/isdepthead", message.Body);
+            stomp("/forwardticket/depthead/1", message.Body);
         }
         private void receivedBranchArena(Ultralight.StompMessage message){
             stomp("/arena", message.Body);

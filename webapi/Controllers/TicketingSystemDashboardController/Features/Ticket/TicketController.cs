@@ -12,6 +12,9 @@ using webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket;
 using webapi.App.Model.User;
 using webapi.App.RequestModel.Common;
 using Comm.Commons.Extensions;
+using System.Text;
+using webapi.App.Features.UserFeature;
+using Newtonsoft.Json;
 
 namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
 {
@@ -31,7 +34,12 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
         [Route("save")]
         public async Task<IActionResult> TaskNew([FromBody] TicketModel request)
         {
-            var result = (request.TransactionNo.IsEmpty()) ? await _repo.SaveTicketAsync(request) : await _repo.SaveTicketAsync(request);
+            var valresult = await validity(request);
+            if (valresult.result == Results.Failed)
+                return Ok(new { Status = "error", Message = valresult.message });
+            if (valresult.result != Results.Success)
+                return NotFound();
+            var result = (request.TransactionNo.IsEmpty()) ? await _repo.SaveTicketAsync(request) : await _repo.UpdateTicketAsync(request);
             if(result.result == Results.Success)
             {
                 return Ok(new { Status = "ok", Message = result.message, Content = request });
@@ -42,6 +50,55 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             }
             return NotFound();
         }
+
+        private async Task<(Results result, string message)> validity(TicketModel request)
+        {
+            if (request == null)
+                return (Results.Null, null);
+
+            if (request.TicketAttachment == null || request.TicketAttachment.Count < 1)
+                return (Results.Success, null);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < request.TicketAttachment.Count; i++)
+            {
+                var attachment = request.TicketAttachment[i].Str();
+                if (attachment.IsEmpty()) continue;
+                if (attachment.StartsWith("http"))
+                {
+                    sb.Append($"<item LNK_URL=\"{attachment}\" />");
+                }
+                else
+                {
+                    var base64arr = attachment.Split(',');
+                    //byte[] bytes = Convert.FromBase64String(attachment);
+                    byte[] bytes = Convert.FromBase64String(base64arr[1]);
+                    if (bytes.Length == 0)
+                        return (Results.Failed, "Make sure selected image is valid.");
+
+                    var res = await ImgService.SendAsync(bytes);
+                    bytes.Clear();
+                    if (res == null)
+                        return (Results.Failed, "Please contact to admin.");
+
+                    var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
+                    if (json["status"].Str() != "error")
+                    {
+                        string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
+                        sb.Append($"<item LNK_URL=\"{ url }\" />");
+                        request.TicketAttachment[i] = url;
+                    }
+                    else return (Results.Failed, "Make sure selected image is valid.");
+                }
+
+            }
+            if (sb.Length > 0)
+            {
+                request.iTicketAttachment = sb.ToString();
+                return (Results.Success, null);
+            }
+            return (Results.Failed, "Make sure selected image is valid.");
+        }
+
         [HttpPost]
         [Route("list")]
         public async Task<IActionResult> TaskList([FromBody] FilterRequest request)
@@ -127,5 +184,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                 return Ok();
             return NotFound();
         }
+
+
     }
 }
