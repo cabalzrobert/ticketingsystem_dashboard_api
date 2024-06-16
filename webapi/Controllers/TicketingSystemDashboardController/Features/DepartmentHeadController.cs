@@ -15,7 +15,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 {
     [Route("app/v1/ticketingdashboard/head")]
     [ApiController]
-    //[ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
+    [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
     public class DepartmentHeadController: ControllerBase
     {
         private readonly IDepartmentHeadRepository _repo;
