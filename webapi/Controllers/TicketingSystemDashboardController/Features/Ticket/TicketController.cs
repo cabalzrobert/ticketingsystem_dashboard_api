@@ -83,7 +83,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                     var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
                     if (json["status"].Str() != "error")
                     {
-                        string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
+                        string url = json["url"].Str();
+                        //string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
                         sb.Append($"<item LNK_URL=\"{ url }\" />");
                         request.TicketAttachment[i] = url;
                     }
@@ -128,6 +129,14 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
         public async Task<IActionResult> TaskMessageSend([FromBody] TicketCommentModel request)
         {
             //request.FileAttachment = "";
+            if(request.isImage == true)
+            {
+                var valresult = await attachmentvalidity(request);
+                if (valresult.result == Results.Failed)
+                    return Ok(new { Status = "error", Message = valresult.message });
+                if (valresult.result != Results.Success)
+                    return NotFound();
+            }
             var result = await _repo.SendCommentAsyn(request);
             if (result.result == Results.Success)
             {
@@ -138,6 +147,55 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                 return Ok(new { Status = "error", Message = result.message });
             }
             return NotFound();
+        }
+
+        private async Task<(Results result, string message)> attachmentvalidity(TicketCommentModel request)
+        {
+            if (request == null)
+                return (Results.Null, null);
+
+            if (request.FileAttachment == null || request.FileAttachment.Count < 1)
+                return (Results.Success, null);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < request.FileAttachment.Count; i++)
+            {
+                var attachment = request.FileAttachment[i].Str();
+                if (attachment.IsEmpty()) continue;
+                if (attachment.StartsWith("http"))
+                {
+                    sb.Append($"<item LNK_URL=\"{attachment}\" />");
+                }
+                else
+                {
+                    var base64arr = attachment.Split(',');
+                    //byte[] bytes = Convert.FromBase64String(attachment);
+                    byte[] bytes = Convert.FromBase64String(base64arr[1]);
+                    if (bytes.Length == 0)
+                        return (Results.Failed, "Make sure selected image is valid.");
+
+                    var res = await ImgService.SendAsync(bytes);
+                    bytes.Clear();
+                    if (res == null)
+                        return (Results.Failed, "Please contact to admin.");
+
+                    var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
+                    if (json["status"].Str() != "error")
+                    {
+                        string url = json["url"].Str();
+                        //string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
+                        sb.Append($"<item LNK_URL=\"{ url }\" />");
+                        request.FileAttachment[i] = url;
+                    }
+                    else return (Results.Failed, "Make sure selected image is valid.");
+                }
+
+            }
+            if (sb.Length > 0)
+            {
+                request.iFileAttachment = sb.ToString();
+                return (Results.Success, null);
+            }
+            return (Results.Failed, "Make sure selected image is valid.");
         }
 
 

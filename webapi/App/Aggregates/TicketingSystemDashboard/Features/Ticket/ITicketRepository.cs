@@ -179,7 +179,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 { "parmmsg", request.Message },
                 { "parmisfile", Convert.ToInt32(request.isFile) },
                 { "parmisimage", Convert.ToInt32(request.isImage) },
-                { "parmxattchmnt", request.FileAttachment },
+                { "parmxattchmnt", request.iFileAttachment },
                 { "parmuserid", account.USR_ID }
             }).FirstOrDefault();
             if (result != null)
@@ -189,6 +189,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 request.CommentID = row1["CommentID"].Str();
                 request.SenderID = account.USR_ID;
                 request.DisplayName = row1["DisplayName"].Str();
+                request.ImageAttachment = request.iFileAttachment;
                 request.ProfilePicture = account.PRF_PIC;
                 request.IsYou = true;
                 request.CommentDate = Convert.ToDateTime(row1["RGS_TRN_TS"].Str()).ToString("MMM dd yyyy HH:mm tt");

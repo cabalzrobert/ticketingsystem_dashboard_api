@@ -91,7 +91,9 @@ namespace webapi.App.Model.User
         public bool isRead;
         public bool IsYou;
         public string ImageAttachment;
-        public string FileAttachment;
+        //public string FileAttachment;
+        public List<String> FileAttachment;
+        public string iFileAttachment;
         public bool isMessage;
     }
 
