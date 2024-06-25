@@ -52,6 +52,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                         MDL_NM = row["MDL_NM"].Str(),
                         FLL_NM = row["FLL_NM"].Str(),
                         DEPT_ID = row["DEPT_ID"].Str(),
+                        Department = row["DEPT_NM"].Str(),
+                        Membership = row["MEM_NM"].Str(),
+                        Position = row["POS_NM"].Str(),
                         MOB_NO = row["MOB_NO"].Str(),
                         EML_ADD = row["EML_ADD"].Str(),
                         HM_ADDR = row["HM_ADDR"].Str(),
@@ -64,12 +67,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                         SKLLS = row["SKLLS"].Str(),
                         PRF_PIC = row["PRF_PIC"].Str(),
                         SIGNATUREID = row["SIGNATUREID"].Str(),
+                        LST_CHNG_PSSWRD = row["LST_CHNG_PSSWRD"].Str(),
                         SessionID = row["SSSN_ID"].Str(),
                         ACT_TYP = row["ACT_TYP"].Str(),
                         isCommunicator = Convert.ToBoolean(row["isCommunicator"].Str()),
-                        isDeptartmentHead = Convert.ToBoolean(row["isDeptartmentHead"].Str())
+                        isDeptartmentHead = Convert.ToBoolean(row["isDeptartmentHead"].Str()),
+                        DateRegistered = (DateTime)row["RGS_TRN_TS"]
 
-                    });
+                    });;
                 }
                 else if (ResultCode == "22")
                     return (Results.Failed, "Your account was in-active", null);
