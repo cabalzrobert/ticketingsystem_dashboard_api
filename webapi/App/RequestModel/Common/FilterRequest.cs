@@ -16,6 +16,8 @@ namespace webapi.App.RequestModel.Common
         public bool IsPending;
         public bool IsCurrent;
         public bool IsActive;
+        public int isCom;
+        public int isDept;
         public String Search;
         public String BaseFilter;
         public String Page;
@@ -29,17 +31,9 @@ namespace webapi.App.RequestModel.Common
         public string PGRP_ID;
         public string OTP;
         public string MOB_NO;
-        public string DONO_ID;
-        public string BrgyCode;
         public string num_row;
-        public string DocTypeID;
-        public string BusinessId;
         public string Gender;
-        public string EmgyID;
-        public string EmgyTypID;
-        public string EmgyContactID;
         public string TickectNo;
-        public string CommunityID;
         public string PostID;
         public int TypeLevel;
 

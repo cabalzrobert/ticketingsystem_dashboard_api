@@ -55,7 +55,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.UserAcc
                 return (Results.Success, null);
 
             if (request.ProfilePicture.IsEmpty())
-                return (Results.Failed, "Please select an image.");
+                return (Results.Success, null);
             if (request.ProfilePicture.StartsWith("http"))
             {
                 request.ImageUrl = request.ProfilePicture;
@@ -75,7 +75,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.UserAcc
                 var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
                 if (json["status"].Str() != "error")
                 {
-                    request.ImageUrl = json["url"].Str();
+                    //string url = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
+                    request.ImageUrl = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
                     //request.ImageUrl = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
                     return (Results.Success, null);
                 }

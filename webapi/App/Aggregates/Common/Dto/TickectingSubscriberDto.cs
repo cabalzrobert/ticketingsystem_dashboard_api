@@ -193,8 +193,13 @@ namespace webapi.App.Aggregates.Common.Dto
             o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("dd MMM yyyy");
             o.AssignedAccount = data["AssignedAccount"].Str();
             o.AssignedAccountname = data["AssignedAccountname"].Str();
-            o.isAssigned = data["isAssigned"].Str();
-            o.Attachment = data["AssignedAccountname"].Str();
+            o.AssignedAccountEmail = data["AssignedAccountEmail"].Str();
+            o.AssignedAccountProfilePicture = data["AssignedAccountProfilePicture"].Str();
+            //o.isAssigned = textInfo.ToLower(data["isAssigned"].Str());
+            o.isAssigned = Convert.ToBoolean(data["isAssigned"]);
+            o.Attachment = data["ATTCHMNT"].Str();
+            o.DepartmenID = data["DepartmentID"].Str();
+            o.DepartmentName = data["DepartmentName"].Str();
             o.isRead = Convert.ToBoolean(data["S_OPN"]);
             return o;
         }

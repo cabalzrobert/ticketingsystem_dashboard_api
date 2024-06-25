@@ -35,15 +35,16 @@ namespace webapi.App.Aggregates.Common
             o.Title = data["NOTIF_TTL"].Str();
             o.Description = data["NOTIF_DESC"].Str();
             o.IsCompany = data["S_COMP"].To<bool>(false);
+            o.IsRequest = data["S_REQ"].To<bool>(false);
             o.IsOpen = data["S_OPN"].To<bool>(false);
-            bool IsWinning = data["S_WNNG"].To<bool>(false);
-            bool IsReceivedAmount = data["S_RCVNG_AMT"].To<bool>(false);
-            if (IsWinning || IsReceivedAmount)
-            {
-                if (IsWinning) o.IsWinning = IsWinning;
-                else if (IsReceivedAmount) o.IsReceivedAmount = IsReceivedAmount;
-                o.Amount = data["AMT"].Str().ToDecimalDouble();
-            }
+            //bool IsWinning = data["S_WNNG"].To<bool>(false);
+            //bool IsReceivedAmount = data["S_RCVNG_AMT"].To<bool>(false);
+            //if (IsWinning || IsReceivedAmount)
+            //{
+            //    if (IsWinning) o.IsWinning = IsWinning;
+            //    else if (IsReceivedAmount) o.IsReceivedAmount = IsReceivedAmount;
+            //    o.Amount = data["AMT"].Str().ToDecimalDouble();
+            //}
             string type = data["TYP"].Str();
             if (!type.IsEmpty()) o.Type = type;
 

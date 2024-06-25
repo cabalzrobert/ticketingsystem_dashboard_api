@@ -51,6 +51,16 @@ namespace webapi.Controllers.SubscriberAppControllers.Features
         }
 
         [HttpPost]
+        [Route("ticketnotification/unseen")]
+        public async Task<IActionResult> RequestUnseenCountAsync([FromBody] FilterRequest filter)
+        {
+            var repoResult = await _notifyRepo.RequestUnseenCountAsync(filter);
+            if (repoResult.result == Results.Success)
+                return Ok(repoResult.count);
+            return NotFound();
+        }
+
+        [HttpPost]
         [Route("lasttransactionno")]
         public async Task<IActionResult> LastTransactionNo()
         {

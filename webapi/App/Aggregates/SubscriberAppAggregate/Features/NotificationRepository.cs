@@ -22,6 +22,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         Task<(Results result, object items)> NotificationAsync(FilterRequest filter);
         Task<(Results result, object obj)> SeenAsync(String NotificationID);
         Task<(Results result, object count)> UnseenCountAsync();
+        Task<(Results result, object count)> RequestUnseenCountAsync(FilterRequest filter);
         Task<(Results result, object count)> LastTransactionNo();
     }
 
@@ -40,6 +41,8 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 { "parmplid", account.PL_ID },
                 { "parmpgrpid", account.PGRP_ID },
                 { "parmuserid", account.USR_ID },
+                { "parmiscom", filter.isCom },
+                { "parmisdept", filter.isDept },
                 { "parmftrns", filter.BaseFilter },
             });
             if(results != null)
@@ -65,7 +68,24 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 var row = ((IDictionary<string, object>) result);
                 return (Results.Success, row["UN_OPN"].Str());
             }
-            return (Results.Null, null); 
+            return (Results.Null, null);
+        }
+        public async Task<(Results result, object count)> RequestUnseenCountAsync(FilterRequest filter)
+        {
+            var result = _repo.DSpQueryMultiple("dbo.spfn_0AA00B", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+                { "parmiscom", filter.isCom },
+                { "parmisdept", filter.isDept },
+                { "parmftrns", filter.BaseFilter },
+            }).ReadSingleOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                return (Results.Success, row["UN_OPN"].Str());
+            }
+            return (Results.Null, null);
         }
 
         public async Task<(Results result, object count)> LastTransactionNo()

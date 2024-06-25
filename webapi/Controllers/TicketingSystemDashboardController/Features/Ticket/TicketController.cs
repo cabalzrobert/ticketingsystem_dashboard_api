@@ -65,6 +65,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                 if (attachment.IsEmpty()) continue;
                 if (attachment.StartsWith("http"))
                 {
+                    request.ImageAttachment = attachment;
                     sb.Append($"<item LNK_URL=\"{attachment}\" />");
                 }
                 else
@@ -83,10 +84,12 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                     var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
                     if (json["status"].Str() != "error")
                     {
+                        
                         string url = json["url"].Str();
+                        var imageurl = url.Replace("https://119.93.89.82", "http://119.93.89.82:5000");
                         //string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
-                        sb.Append($"<item LNK_URL=\"{ url }\" />");
-                        request.TicketAttachment[i] = url;
+                        sb.Append($"<item LNK_URL=\"{ imageurl }\" />");
+                        request.TicketAttachment[i] = imageurl;
                     }
                     else return (Results.Failed, "Make sure selected image is valid.");
                 }
@@ -100,6 +103,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             return (Results.Failed, "Make sure selected image is valid.");
         }
 
+
+
         [HttpPost]
         [Route("list")]
         public async Task<IActionResult> TaskList([FromBody] FilterRequest request)
@@ -109,6 +114,18 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                 return Ok(new { Status = "ok", ticket = result.ticket });
             else if (result.result == Results.Failed)
                 return Ok(new { Status = "error", ticket = result.ticket });
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("resolve")]
+        public async Task<IActionResult> TaskResolve([FromBody] TicketRessolve request)
+        {
+            var result = await _repo.RessolvedAsync(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", Message = result.message });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", Message = result.message });
             return NotFound();
         }
 
@@ -140,7 +157,25 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             var result = await _repo.SendCommentAsyn(request);
             if (result.result == Results.Success)
             {
-                return Ok(new { Status = "ok", Message = result.message, Content = request });
+                //return Ok(new { Status = "ok", Message = result.message, Content = request });
+                return Ok(new { Status = "ok", Message = result.message, Content = new { 
+                      Branch_ID = request.Branch_ID
+                    , CommentDate = request.CommentDate
+                    , CommentID = request.CommentID
+                    , Company_ID = request.Company_ID
+                    , Department = ""
+                    , DisplayName = request.DisplayName
+                    , FileAttachment = ""
+                    , ImageAttachment = request.ImageAttachment
+                    , IsYou = true
+                    , Message = request.Message
+                    , ProfilePicture = request.ProfilePicture
+                    , SenderID = request.SenderID
+                    , TransactionNo = request.TransactionNo
+                    , isFile = request.isFile
+                    , isImage = request.isImage
+                    , isMessage = true
+                    , isRead = request.isRead } });
             }
             if (result.result == Results.Failed)
             {
@@ -163,6 +198,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                 if (attachment.IsEmpty()) continue;
                 if (attachment.StartsWith("http"))
                 {
+                    request.ImageAttachment = attachment;
                     sb.Append($"<item LNK_URL=\"{attachment}\" />");
                 }
                 else
@@ -181,7 +217,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                     var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(res);
                     if (json["status"].Str() != "error")
                     {
-                        string url = json["url"].Str();
+                        string url = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
+                        request.ImageAttachment = url;
                         //string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
                         sb.Append($"<item LNK_URL=\"{ url }\" />");
                         request.FileAttachment[i] = url;

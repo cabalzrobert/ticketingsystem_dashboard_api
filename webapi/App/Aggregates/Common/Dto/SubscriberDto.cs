@@ -1429,6 +1429,28 @@ namespace webapi.App.Aggregates.Common
             return o;
         }
 
+        public static IDictionary<string, object> RequestNotification(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.NotificationID = data["NotificationID"].Str();
+            o.DateTransaction = data["dateCreated"].Str();
+            o.Title = data["NotificationTitle"].Str();
+            o.Description = data["NotificationDescription"].Str();
+            o.IsOpen = Convert.ToBoolean(data["S_OPN"]);
+            o.IsRequest = Convert.ToBoolean(data["S_REQ"]);
+            string type = data["NotificationType"].Str();
+            if (!type.IsEmpty()) o.Type = type;
+            try
+            {
+                DateTime datetime = data["dateCreated"].To<DateTime>();
+                o.DateDisplay = datetime.ToString("MMM dd, yyyy");
+                o.TimeDisplay = datetime.ToString("hh:mm:ss tt");
+                o.FulldateDisplay = $"{o.DateDisplay} {o.TimeDisplay}";
+            }
+            catch { }
+            return o;
+        }
         public static IDictionary<string, object> ForwardedTicketNotification(IDictionary<string, object> data)
         {
             dynamic o = Dynamic.Object;

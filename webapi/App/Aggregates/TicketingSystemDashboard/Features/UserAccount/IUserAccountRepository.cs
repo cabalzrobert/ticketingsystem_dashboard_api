@@ -66,11 +66,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                     return (Results.Success, "Successfully save.");
                 }
                 else if (ResultCode == "2")
-                    return (Results.Success, "Invalid Mobile Number, Try again");
+                    return (Results.Failed, "Invalid Mobile Number, Try again");
                 else if (ResultCode == "3")
                     return (Results.Failed, "Username already exist. Try again");
                 else if (ResultCode == "4")
                     return (Results.Failed, "Already Exist. Try again");
+                else if (ResultCode == "5")
+                    return (Results.Failed, "Mobile Number already Exist. Try again");
                 else if (ResultCode == "0")
                     return (Results.Failed, "Please check data. Try again");
             }

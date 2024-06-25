@@ -67,6 +67,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 {"parmtab", param.tab },
                 {"parmrow", param.row },
                 {"parmsearch", param.search },
+                {"parmuserid", account.USR_ID }
             });
             if (results != null)
                 return (Results.Success, results);

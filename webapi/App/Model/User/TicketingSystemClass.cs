@@ -74,6 +74,8 @@ namespace webapi.App.Model.User
         public string CreatedDate;
         public string TicketStatusname;
         public string TicketStatus;
+        public string ImageAttachment;
+        public string Attachment;
     }
     public class TicketCommentModel
     {
@@ -95,6 +97,13 @@ namespace webapi.App.Model.User
         public List<String> FileAttachment;
         public string iFileAttachment;
         public bool isMessage;
+    }
+    public class TicketRessolve
+    {
+        public string TransactionNo;
+        public string TicketNo;
+        public int Status;
+        public int ActionEvent;
     }
 
 }

@@ -25,6 +25,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         Task<(Results result, object cntticket)> LoadCntTicketAsync();
         Task<(Results result, String message)> TestNotificationAsyn();
         Task<(Results result, object obj)> SeenAsync(String transactionNo);
+        Task<(Results result, String message)> RessolvedAsync(TicketRessolve request);
     }
     public class TicketRepository:ITicketRepository
     {
@@ -81,7 +82,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 { "parmpgrpid", account.PGRP_ID },
                 { "parmuserid", account.USR_ID },
                 { "parmsssid", account.SessionID },
-                { "armtrnno", request.TransactionNo },
+                { "parmtrnno", request.TransactionNo },
                 { "parmcategory", request.Category },
                 { "parmticket", request.TicketNo },
                 { "parmsubject", request.TitleTicket },
@@ -103,6 +104,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     request.Statusname = row1["ticketStatus"].Str();
                     request.TicketStatus = row1["status"].Str();
                     request.TicketStatusname = row1["ticketStatus"].Str();
+                    request.Attachment = row1["ATTCHMNT"].Str();
                     //await PostTicketRequest(result);
                     return (Results.Success, "Successfully save.");
                 }
@@ -115,7 +117,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         public async Task<bool> PostTicketRequest(IDictionary<string, object> data)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/1/ticketrequest/iscommunicator/",
-                new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data) });
+                new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data), notification =  SubscriberDto.RequestNotification(data)});
             return true;
 
             //await Pusher.PushAsync($"/{account.PL_ID}/{account.PGRP_ID}/notify"
@@ -186,10 +188,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             {
                 var row1 = ((IDictionary<string, object>)result);
                 string ResultCode = row1["RESULT"].Str();
+                request.Branch_ID = account.PGRP_ID;
                 request.CommentID = row1["CommentID"].Str();
+                request.Company_ID = account.PL_ID;
                 request.SenderID = account.USR_ID;
                 request.DisplayName = row1["DisplayName"].Str();
-                request.ImageAttachment = request.iFileAttachment;
+                //request.ImageAttachment = request.iFileAttachment;
                 request.ProfilePicture = account.PRF_PIC;
                 request.IsYou = true;
                 request.CommentDate = Convert.ToDateTime(row1["RGS_TRN_TS"].Str()).ToString("MMM dd yyyy HH:mm tt");
@@ -243,6 +247,28 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             return (Results.Success, null);
         }
 
-        
+        public async Task<(Results result, string message)> RessolvedAsync(TicketRessolve request)
+        {
+            var result = _repo.DSpQuery<dynamic>($"dbo.spfn_AEARP0H", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmticketno", request.TicketNo},
+                {"parmtransactionno", request.TransactionNo},
+                {"parmstatus", request.Status},
+                {"parmactionevents", request.ActionEvent},
+                {"parmuserid", account.USR_ID}
+            }).FirstOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                string ResultCode = row["RESULT"].Str();
+                if (ResultCode == "1")
+                    return (Results.Success, "Successfully save.");
+                else if (ResultCode == "0")
+                    return (Results.Failed, "Please check data. Try again");
+            }
+            return (Results.Null, null);
+        }
     }
 }
