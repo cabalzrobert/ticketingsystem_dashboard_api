@@ -77,6 +77,8 @@ namespace webapi.App.Model.User
         public String ACT_TYP;
         public String DEPT_ID;
         public string Department;
+        public string Membership;
+        public string Position;
 
         public string FRST_NM;
         public string LST_NM;
@@ -114,6 +116,8 @@ namespace webapi.App.Model.User
         public string SUBSCRIBER_ID;
         public string RQRD_CHNG_PSSWRD;
         public string TRGR_CHNG_PSSWRD;
+        public string LST_CHNG_PSSWRD;
+        public DateTime DateRegistered;
     }
     
 }
