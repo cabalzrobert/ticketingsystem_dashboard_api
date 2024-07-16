@@ -37,6 +37,7 @@ namespace webapi.App.TSDashboardModel
         public string Username;
         public string Password;
         public string HeadOfficeAddress;
+        public string HeadOfficeTelephoneNumber;
         public string HeadOfficeEmailAddress;
         //6
         public string MobileNumber;

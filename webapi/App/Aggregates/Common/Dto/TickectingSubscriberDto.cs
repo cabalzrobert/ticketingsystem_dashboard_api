@@ -144,7 +144,10 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Address = data["PRSNT_ADDR"].Str();
             o.LastSeen = data["LST_LOG_IN"].Str();
             o.isCommunicator = data["isCommunicator"].Str();
-            o.isDeptartmentHead = data["isDeptHead"].Str();
+            o.isDepartmentHead = data["isDeptHead"].Str();
+            o.AccountType = data["AccountType"].Str();
+            o.AccountTypeName = data["AccountTypeName"].Str();
+            o.RegisteredDate = Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy hh:mm tt");
             return o;
         }
 

@@ -24,6 +24,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         Task<(Results result, object count)> UnseenCountAsync();
         Task<(Results result, object count)> RequestUnseenCountAsync(FilterRequest filter);
         Task<(Results result, object count)> LastTransactionNo();
+        Task<(Results result, String message)> ReadAllAsync(NotificationList request);
     }
 
     public class NotificationRepository : INotificationRepository
@@ -41,18 +42,20 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 { "parmplid", account.PL_ID },
                 { "parmpgrpid", account.PGRP_ID },
                 { "parmuserid", account.USR_ID },
+                { "parmisall", filter.isRead },
                 { "parmiscom", filter.isCom },
                 { "parmisdept", filter.isDept },
                 { "parmftrns", filter.BaseFilter },
+                { "parmdepartment", filter.DepartmentID },
             });
             if(results != null)
-                return (Results.Success, NotificationDto.FilterNotifications(results.Read(), 25));
+                return (Results.Success, NotificationDto.FilterNotifications(results.Read(), 100));
             return (Results.Null, null); 
         }
         public async Task<(Results result, object obj)> SeenAsync(String NotificationID){
             var result = _repo.DSpQuery<dynamic>("dbo.spfn_0AA0AB0B", new Dictionary<string, object>(){
-                { "parmcompid", account.PL_ID },
-                { "parmbrcd", account.PGRP_ID },
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
                 { "parmuserid", account.USR_ID },
                 { "parmnotifid", NotificationID }, 
             });
@@ -79,6 +82,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 { "parmiscom", filter.isCom },
                 { "parmisdept", filter.isDept },
                 { "parmftrns", filter.BaseFilter },
+                { "parmdepartment", filter.DepartmentID },
             }).ReadSingleOrDefault();
             if (result != null)
             {
@@ -101,6 +105,17 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
                 return (Results.Success, row["TRN_NO"].Str());
             }
             return (Results.Null, null);
+        }
+
+        public async Task<(Results result, string message)> ReadAllAsync(NotificationList request)
+        {
+            var result = _repo.DSpQuery<dynamic>("dbo.spfn_0AA0AB0E", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+                { "parmjson", request.Notificationlist },
+            });
+            return (Results.Success, null);
         }
     }
 }

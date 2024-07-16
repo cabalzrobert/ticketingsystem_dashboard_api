@@ -25,9 +25,10 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         Task<(Results result, object cntticket)> LoadCntTicketAsync();
         Task<(Results result, String message)> TestNotificationAsyn();
         Task<(Results result, object obj)> SeenAsync(String transactionNo);
+        Task<(Results result, object isassigned)> IsAssignedAsync(String transactionNo);
         Task<(Results result, String message)> RessolvedAsync(TicketRessolve request);
     }
-    public class TicketRepository:ITicketRepository
+    public class TicketRepository : ITicketRepository
     {
         private readonly ISubscriber _identity;
         private readonly IRepository _repo;
@@ -43,13 +44,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             request.TicketNo = ((int)DateTime.Now.ToTimeMillisecond()).ToString("X");
             var result = _repo.DSpQueryMultiple("dbo.spfn_AEARP0A", new Dictionary<string, object>(){
                 { "parmplid", account.PL_ID },
-                { "parmpgrpid", account.PGRP_ID },                
-                { "parmuserid", account.USR_ID },                 
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
                 { "parmsssid", account.SessionID },
                 { "parmcategory", request.Category },
-                { "parmticket", request.TicketNo },                
-                { "parmsubject", request.TitleTicket },                
-                { "parmbody", request.TicketDescription },                   
+                { "parmticket", request.TicketNo },
+                { "parmsubject", request.TitleTicket },
+                { "parmbody", request.TicketDescription },
                 { "parmxattchmnt", request.iTicketAttachment },
                 { "parmprioritylevel", request.PriorityLevel }
             }).ReadSingleOrDefault();
@@ -57,7 +58,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             {
                 var row1 = ((IDictionary<string, object>)result);
                 string ResultCode = row1["RESULT"].Str();
-                if(ResultCode == "1")
+                if (ResultCode == "1")
                 {
                     request.TransactionNo = row1["transactionNo"].Str();
                     request.TicketNo = row1["ticketNo"].Str();
@@ -67,7 +68,10 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     request.Statusname = row1["ticketStatus"].Str();
                     request.TicketStatus = row1["status"].Str();
                     request.TicketStatusname = row1["ticketStatus"].Str();
-                    await PostTicketRequest(result);
+                    if (account.ACT_TYP == "6")
+                        await PostTicketRequestorHead(result);
+                    if (account.ACT_TYP == "5")
+                        await PostTicketRequestCommunicator(result);
                     return (Results.Success, "Successfully save.");
                 }
                 else if (ResultCode == "0")
@@ -114,10 +118,26 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             return (Results.Null, null);
         }
 
+        public async Task<bool> PostTicketRequestorHead(IDictionary<string, object> data)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/5/{account.DEPT_ID}/requestorhead/",
+                new { type = "requestorhead-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<bool> PostTicketRequestCommunicator(IDictionary<string, object> data)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/4/communicator/",
+                new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
         public async Task<bool> PostTicketRequest(IDictionary<string, object> data)
         {
+
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/1/ticketrequest/iscommunicator/",
-                new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data), notification =  SubscriberDto.RequestNotification(data)});
+                new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            //new { type = "communicator-notification", content = SubscriberDto.RequestTicketNotification(data) });
             return true;
 
             //await Pusher.PushAsync($"/{account.PL_ID}/{account.PGRP_ID}/notify"
@@ -150,7 +170,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 
             });
             if (results != null)
-                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 100));
+                return (Results.Success, TickectingSubscriberDto.GetRequestTicketList(results, 25));
             return (Results.Null, null);
         }
 
@@ -267,6 +287,22 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     return (Results.Success, "Successfully save.");
                 else if (ResultCode == "0")
                     return (Results.Failed, "Please check data. Try again");
+            }
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object isassigned)> IsAssignedAsync(string transactionNo)
+        {
+            var result = _repo.DSpQueryMultiple("dbo.spfn_AEAAEA100B", new Dictionary<string, object>(){
+                { "parmplid", account.PL_ID },
+                { "parmpgrpid", account.PGRP_ID },
+                { "parmuserid", account.USR_ID },
+                { "parmtransactionno", transactionNo },
+            }).ReadSingleOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                return (Results.Success, row["isAssigned"].Str());
             }
             return (Results.Null, null);
         }

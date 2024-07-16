@@ -7,7 +7,7 @@ namespace webapi.App.Aggregates.Common
 {
     public class NotificationDto
     {
-        public static IEnumerable<dynamic> FilterNotifications(IEnumerable<dynamic> list, int limit = 50)
+        public static IEnumerable<dynamic> FilterNotifications(IEnumerable<dynamic> list, int limit = 100)
         {
             if (list == null) return null;
             var items = Notifications(list);
@@ -30,13 +30,16 @@ namespace webapi.App.Aggregates.Common
         public static IDictionary<string, object> Notification(IDictionary<string, object> data)
         {
             dynamic o = Dynamic.Object;
-            o.NotificationID = ((int)data["NOTIF_ID"].Str().ToDecimalDouble()).ToString("X");
+            //o.NotificationID = ((int)data["NOTIF_ID"].Str().ToDecimalDouble()).ToString("X");
+            o.NotificationID = ((int)data["NOTIF_ID"].Str().ToDecimalDouble());
             o.DateTransaction = data["RGS_TRN_TS"];
+            o.TransactionNo = data["TRN_NO"].Str();
             o.Title = data["NOTIF_TTL"].Str();
             o.Description = data["NOTIF_DESC"].Str();
             o.IsCompany = data["S_COMP"].To<bool>(false);
             o.IsRequest = data["S_REQ"].To<bool>(false);
             o.IsOpen = data["S_OPN"].To<bool>(false);
+            o.IsAssigned = data["IsAssigned"].To<bool>(false);
             //bool IsWinning = data["S_WNNG"].To<bool>(false);
             //bool IsReceivedAmount = data["S_RCVNG_AMT"].To<bool>(false);
             //if (IsWinning || IsReceivedAmount)

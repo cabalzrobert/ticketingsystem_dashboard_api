@@ -70,6 +70,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
                         LST_CHNG_PSSWRD = row["LST_CHNG_PSSWRD"].Str(),
                         SessionID = row["SSSN_ID"].Str(),
                         ACT_TYP = row["ACT_TYP"].Str(),
+                        ACT_TYP_NM = row["ACT_TYP_NM"].Str(),
                         isCommunicator = Convert.ToBoolean(row["isCommunicator"].Str()),
                         isDeptartmentHead = Convert.ToBoolean(row["isDeptartmentHead"].Str()),
                         DateRegistered = (DateTime)row["RGS_TRN_TS"]

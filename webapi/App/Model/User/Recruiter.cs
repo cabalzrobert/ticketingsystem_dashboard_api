@@ -75,6 +75,7 @@ namespace webapi.App.Model.User
         public String USR_ID;
         public String ACT_ID;
         public String ACT_TYP;
+        public String ACT_TYP_NM;
         public String DEPT_ID;
         public string Department;
         public string Membership;

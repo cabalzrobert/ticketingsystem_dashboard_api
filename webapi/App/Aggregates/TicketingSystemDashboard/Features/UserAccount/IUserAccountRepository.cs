@@ -49,8 +49,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmaddress", request.Address},
                 {"parmprofilepictureURL", request.IMGURL},
                 {"@parmusername", ""},
+                {"@parmaccounttype", request.AccountType},
                 {"parmcommunication", request.isCommunicator},
-                {"parmDepartmenthead", request.isDeptartmentHead},
+                {"parmDepartmenthead", request.isDepartmentHead},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)
@@ -60,6 +61,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 request.AccountID = row["ACT_ID"].Str();
                 request.Name = row["FLL_NM"].Str();
                 request.MobileNumber = row["MOB_NO"].Str();
+                request.RegisteredDate = Convert.ToDateTime(row["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy hh:mm tt");
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
                 {
@@ -96,9 +98,10 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmbirthdate", request.Birthdate},
                 {"parmmobilenumber", request.MobileNumber},
                 {"parmaddress", request.Address},
+                {"@parmaccounttype", request.AccountType},
                 {"parmprofilepictureURL", request.ImageUrl},
                 {"parmcommunication", request.isCommunicator},
-                {"parmDepartmenthead", request.isDeptartmentHead},
+                {"parmDepartmenthead", request.isDepartmentHead},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)
@@ -113,7 +116,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                     return (Results.Success, "Successfully save.");
                 }
                 else if (ResultCode == "2")
-                    return (Results.Success, "Invalid Mobile Number, Try again");
+                    return (Results.Failed, "Invalid Mobile Number, Try again");
                 else if (ResultCode == "4")
                     return (Results.Failed, "Already Exist. Try again");
                 else if (ResultCode == "0")

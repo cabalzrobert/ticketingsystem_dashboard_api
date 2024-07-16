@@ -1435,6 +1435,7 @@ namespace webapi.App.Aggregates.Common
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             o.NotificationID = data["NotificationID"].Str();
             o.DateTransaction = data["dateCreated"].Str();
+            o.TransactionNo = data["transactionNo"].Str();
             o.Title = data["NotificationTitle"].Str();
             o.Description = data["NotificationDescription"].Str();
             o.IsOpen = Convert.ToBoolean(data["S_OPN"]);

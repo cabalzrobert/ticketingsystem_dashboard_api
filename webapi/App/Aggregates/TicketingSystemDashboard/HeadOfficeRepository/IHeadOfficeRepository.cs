@@ -35,12 +35,16 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.HeadOfficeRepository
                     {"parmplid", ho.parmplid},
                     {"parmgrpid", ho.parmpgrpid},
                     {"parmlnm", ho.HeadOfficeName},
+
                     {"parmadd", ho.HeadOfficeAddress},
-                    {"parmemailadd", ho.HeadOfficeEmailAddress},
+                    {"@parmtelno", ho.HeadOfficeTelephoneNumber},
+                    {"@parmemail", ho.HeadOfficeEmailAddress},
 
                     {"parmuserfnm", ho.FirstName},
                     {"parmuserlnm", ho.LastName},
                     {"parmusermnm", ho.MiddleInitial},
+                    {"parmemailadd", ho.EmailAddress},
+
 
                     {"parmusername", ho.Username},
                     {"parmuserpassword", ho.Password},

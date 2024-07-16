@@ -33,10 +33,19 @@ namespace webapi.Controllers.SubscriberAppControllers.Features
         [Route("notification/{NotificationID}/seen")]
         public async Task<IActionResult> Task(String NotificationID){
             if(NotificationID.IsEmpty()) return NotFound();
-            try{ NotificationID = Convert.ToInt32(NotificationID, 16).Str(); }
+            try{ NotificationID = Convert.ToInt32(NotificationID).Str(); }
             catch{ return NotFound(); }
             var repoResult = await _notifyRepo.SeenAsync(NotificationID);
             if(repoResult.result == Results.Success)
+                return Ok();
+            return NotFound();
+        }
+        [HttpPost]
+        [Route("notification/seen/all")]
+        public async Task<IActionResult> ReadAll([FromBody] NotificationList request)
+        {
+            var result = await _notifyRepo.ReadAllAsync(request);
+            if (result.result == Results.Success)
                 return Ok();
             return NotFound();
         }

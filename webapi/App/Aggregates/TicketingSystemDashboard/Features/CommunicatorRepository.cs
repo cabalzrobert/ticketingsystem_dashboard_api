@@ -157,7 +157,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         public async Task<bool> PostTicketRequest(IDictionary<string, object> data, string departmentid)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{departmentid}/forwardticket/depthead/1",
-                new { type = "departmenthead-notification", content = SubscriberDto.RequestTicketNotification(data) });
+                new { type = "departmenthead-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
             return true;
         }
     }

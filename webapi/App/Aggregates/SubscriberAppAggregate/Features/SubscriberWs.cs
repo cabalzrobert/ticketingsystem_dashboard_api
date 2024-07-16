@@ -87,7 +87,10 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
 
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isCommunicator)}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.ACT_TYP}/{account.DEPT_ID}/requestorhead", this.receivedTicketRequestorHead);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.ACT_TYP}/communicator", this.receivedTicketRequestorHead);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/forwardticket/depthead/{Convert.ToInt32(account.isDeptartmentHead)}", this.receivedTicketForwadedDeptHead);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/assigned", this.receivedTicketAssignedTo);
             //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
 
             //stack.subscribe($"/{account.CompanyID}/{account.BranchID}/arena", this.receivedBranchArena);
@@ -150,9 +153,21 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         {
             stomp("/1/ticketrequest/iscommunicator", message.Body);
         }
+        private void receivedTicketRequestorHead(Ultralight.StompMessage message)
+        {
+            stomp("/requestorhead", message.Body);
+        }
+        private void receivedTicketCommunicator(Ultralight.StompMessage message)
+        {
+            stomp("/communicator", message.Body);
+        }
         private void receivedTicketForwadedDeptHead(Ultralight.StompMessage message)
         {
             stomp("/forwardticket/depthead/1", message.Body);
+        }
+        private void receivedTicketAssignedTo(Ultralight.StompMessage message)
+        {
+            stomp("/assigned", message.Body);
         }
         private void receivedBranchArena(Ultralight.StompMessage message){
             stomp("/arena", message.Body);

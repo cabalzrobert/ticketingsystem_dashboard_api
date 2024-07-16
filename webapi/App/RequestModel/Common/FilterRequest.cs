@@ -36,6 +36,8 @@ namespace webapi.App.RequestModel.Common
         public string TickectNo;
         public string PostID;
         public int TypeLevel;
+        public string isRead;
+        public string DepartmentID;
 
         public DateTime? TransactionDt;
         public DateTime? FromDt;
@@ -121,5 +123,10 @@ namespace webapi.App.RequestModel.Common
             return true;
         }
 
+    }
+
+    public class NotificationList
+    {
+        public string Notificationlist;
     }
 }

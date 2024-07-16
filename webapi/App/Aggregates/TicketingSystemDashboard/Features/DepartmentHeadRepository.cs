@@ -9,6 +9,7 @@ using webapi.App.TSDashboardModel;
 using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
+using webapi.App.Features.UserFeature;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -76,6 +77,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 {"parmtab", param.tab },
                 {"parmrow", param.row },
                 {"parmsearch", param.search },
+                {"parmuserid", account.USR_ID }
             });
             if (results != null)
                 return (Results.Success, results);
@@ -102,17 +104,28 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid",account.PGRP_ID},
                 {"parmticketno",ticket.ticketNo },
-                {"parmassignedto",ticket.assignedTo }
+                {"parmassignedto",ticket.assignedTo },
+                {"parmuserid", account.USR_ID }
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                await PostTicketRequest(results, ticket.assignedTo);
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
+        }
+
+        public async Task<bool> PostTicketRequest(IDictionary<string, object> data, string assignedTo)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{assignedTo}/assigned",
+                new { type = "assigned-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
         }
 
         public async Task<(Results result, string message)> ReturnTicket(TicketInfo ticket)

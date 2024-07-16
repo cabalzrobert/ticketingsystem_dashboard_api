@@ -184,6 +184,17 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             return NotFound();
         }
 
+
+        [HttpPost]
+        [Route("isassigned")]
+        public async Task<IActionResult> IsAssignedAsync(String transactionNo)
+        {
+            var repoResult = await _repo.IsAssignedAsync(transactionNo);
+            if (repoResult.result == Results.Success)
+                return Ok(repoResult.isassigned);
+            return NotFound();
+        }
+
         private async Task<(Results result, string message)> attachmentvalidity(TicketCommentModel request)
         {
             if (request == null)
