@@ -38,6 +38,11 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
                 {"parmdepartmentname", request.DepartmentName},
+                {"parmdepartmenthead", request.DepartmentHeadID},
+                {"parmcategorylist", request.CategoryList},
+                {"parmcategorylistremove", request.CategoryListRemove},
+                {"parmstafflist", request.StaffList},
+                {"parmstafflistremove", request.StaffListRemove},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)
@@ -47,7 +52,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
                 {
-                    return (Results.Success, "Successfully save.");
+                    return (Results.Success, "New Department successfully add!");
                 }
                 else if (ResultCode == "2")
                     return (Results.Success, "Already Exist");
@@ -75,12 +80,17 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
 
         public async Task<(Results result, string message)> UpdateDepartmentAsyn(DepartmentModel request)
         {
-            var result = _repo.DSpQuery<dynamic>($"dbo.spfn_LAE0003", new Dictionary<string, object>()
+            var result = _repo.DSpQuery<dynamic>($"dbo.spfn_LAE0004", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
                 {"parmdepartmentid", request.DepartmentID},
                 {"parmdepartmentname", request.DepartmentName},
+                {"parmdepartmenthead", request.DepartmentHeadID},
+                {"parmcategorylist", request.CategoryList},
+                {"parmcategorylistremove", request.CategoryListRemove},
+                {"parmstafflist", request.StaffList},
+                {"parmstafflistremove", request.StaffListRemove},
                 {"parmuserid", account.USR_ID}
             }).FirstOrDefault();
             if (result != null)
@@ -90,7 +100,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Department
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
                 {
-                    return (Results.Success, "Successfully save.");
+                    return (Results.Success, "Department successfully update!");
                 }
                 else if (ResultCode == "2")
                     return (Results.Success, "Already Exist");

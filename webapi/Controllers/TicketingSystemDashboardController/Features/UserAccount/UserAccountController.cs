@@ -97,5 +97,38 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.UserAcc
                 return Ok(new { Status = "error", useraccount = result.useraccount });
             return NotFound();
         }
+        [HttpPost]
+        [Route("departmenthead")]
+        public async Task<IActionResult> DepartmentHeadAsync([FromBody] FilterRequest request)
+        {
+            var result = await _repo.LoadDepartmentHeadAccountAsync(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", useraccount = result.useraccount });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", useraccount = result.useraccount });
+            return NotFound();
+        }
+        [HttpPost]
+        [Route("departmentstaff")]
+        public async Task<IActionResult> DepartmentStaffAsync([FromBody] FilterRequest request)
+        {
+            var result = await _repo.LoadDepartmentStaffAccountAsync(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", useraccount = result.useraccount });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", useraccount = result.useraccount });
+            return NotFound();
+        }
+        [HttpPost]
+        [Route("stafflist")]
+        public async Task<IActionResult>StaffAccountAsync([FromBody] FilterRequest request)
+        {
+            var result = await _repo.LoadStaffAccountAsync(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", useraccount = result.useraccount });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", useraccount = result.useraccount });
+            return NotFound();
+        }
     }
 }

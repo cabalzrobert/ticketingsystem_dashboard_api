@@ -19,6 +19,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Category
         Task<(Results result, String message)> SaveCategoryAsyn(CategoryModel request);
         Task<(Results result, String message)> UpdateCategoryAsyn(CategoryModel request);
         Task<(Results result, object cat)> LoadCategoryAsync(FilterRequest req);
+        Task<(Results result, object cat)> LoadCategorybyDepartmentAsync(FilterRequest req);
     }
     public class CategoryRepository:ICategoryRepository
     {
@@ -91,6 +92,24 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Category
                 //{"parmplid",account.PL_ID },
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", req.DepartmentID},
+                {"parmrownum", req.num_row },
+                {"parmsearch", req.Search }
+
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.GetCategoryList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object cat)> LoadCategorybyDepartmentAsync(FilterRequest req)
+        {
+            var results = _repo.DSpQuery<dynamic>($"dbo.spfn_LAC0002", new Dictionary<string, object>()
+            {
+                //{"parmplid",account.PL_ID },
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", req.DepartmentID},
                 {"parmrownum", req.num_row },
                 {"parmsearch", req.Search }
 

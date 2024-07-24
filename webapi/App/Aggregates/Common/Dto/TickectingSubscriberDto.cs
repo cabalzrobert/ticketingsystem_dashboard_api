@@ -35,6 +35,9 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Company_ID = data["PL_ID"].Str();
             o.DepartmentID = data["DEPTID"].Str();
             o.DepartmentName = data["DEPT_DESCR"].Str();
+            o.DepartmentHead = data["DepartmentHead"].Str();
+            o.DepartmentHeadID = data["USR_ID"].Str();
+            o.NoOfStaff = data["NoOfStaff"].Str();
             return o;
         }
 
@@ -55,6 +58,7 @@ namespace webapi.App.Aggregates.Common.Dto
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
             o.Company_ID = data["PL_ID"].Str();
+            o.DepartmentID = data["DEPTID"].Str();
             o.CategoryID = data["CATID"].Str();
             o.Categoryname = data["CAT_DESCR"].Str();
             return o;

@@ -38,6 +38,8 @@ namespace webapi.App.RequestModel.Common
         public int TypeLevel;
         public string isRead;
         public string DepartmentID;
+        public string AccountType;
+        public int isDepartment;
 
         public DateTime? TransactionDt;
         public DateTime? FromDt;

@@ -14,6 +14,11 @@ namespace webapi.App.Model.User
         public string PGRP_ID;
         public string DepartmentID;
         public string DepartmentName;
+        public string CategoryList;
+        public string CategoryListRemove;
+        public string DepartmentHeadID;
+        public string StaffList;
+        public string StaffListRemove;
     }
     public class CategoryModel
     {

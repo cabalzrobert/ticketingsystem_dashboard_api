@@ -19,6 +19,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
         Task<(Results result, String message)> SaveUserAccountAsyn(UserAccountModel request);
         Task<(Results result, String message)> UpdateUserAccountAsyn(UserAccountModel request);
         Task<(Results result, object useraccount)> LoadUserAccountAsync(FilterRequest req);
+        Task<(Results result, object useraccount)> LoadDepartmentHeadAccountAsync(FilterRequest req);
+        Task<(Results result, object useraccount)> LoadStaffAccountAsync(FilterRequest req);
+        Task<(Results result, object useraccount)> LoadDepartmentStaffAccountAsync(FilterRequest req);
     }
     public class UserAccountRepository:IUserAccountRepository
     {
@@ -132,6 +135,60 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 //{"parmplid",account.PL_ID },
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
+                {"parmrownum", req.num_row },
+                //{"parmaccounttype", req.AccountType },
+                //{"parmdepartmentid", req.DepartmentID },
+                //{"parmisdepartment", req.isDepartment },
+                {"parmsearch", req.Search }
+
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.GetUsserAccountList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object useraccount)> LoadDepartmentHeadAccountAsync(FilterRequest req)
+        {
+            var results = _repo.DSpQuery<dynamic>($"dbo.spfn_BDADBD0002B", new Dictionary<string, object>()
+            {
+                //{"parmplid",account.PL_ID },
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", req.DepartmentID},
+                {"parmrownum", req.num_row },
+                {"parmsearch", req.Search }
+
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.GetUsserAccountList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object useraccount)> LoadDepartmentStaffAccountAsync(FilterRequest req)
+        {
+            var results = _repo.DSpQuery<dynamic>($"dbo.spfn_BDADBD0002D", new Dictionary<string, object>()
+            {
+                //{"parmplid",account.PL_ID },
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", req.DepartmentID },
+                {"parmrownum", req.num_row },
+                {"parmsearch", req.Search }
+
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.GetUsserAccountList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object useraccount)> LoadStaffAccountAsync(FilterRequest req)
+        {
+            var results = _repo.DSpQuery<dynamic>($"dbo.spfn_BDADBD0002C", new Dictionary<string, object>()
+            {
+                //{"parmplid",account.PL_ID },
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdepartmentid", req.DepartmentID },
                 {"parmrownum", req.num_row },
                 {"parmsearch", req.Search }
 
