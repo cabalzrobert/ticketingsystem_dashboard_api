@@ -54,7 +54,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
             if (result.result == Results.Success)
                 return Ok(new { Status = "ok", message = result.message });
             return BadRequest();
-
+            //Need WebSocket
         }
 
         [HttpPost]
@@ -65,7 +65,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
             if (result.result == Results.Success)
                 return Ok(new { Status = "ok", message = result.message });
             return BadRequest();
-
+            //Need WebSocket
         }
 
         [HttpPost]
