@@ -64,7 +64,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 request.AccountID = row["ACT_ID"].Str();
                 request.Name = row["FLL_NM"].Str();
                 request.MobileNumber = row["MOB_NO"].Str();
-                request.RegisteredDate = Convert.ToDateTime(row["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy hh:mm tt");
+                request.RegisteredDate = (row["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(row["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy hh:mm tt");
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
                 {
