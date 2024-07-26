@@ -79,11 +79,21 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_FORWARDTICKET", new Dictionary<string, object>()
             {
+                //{"parmplid", account.PL_ID},
+                //{"parmpgrpid", account.PGRP_ID},
+                //{"parmticketno",ticket.ticketNo },
+                //{"parmassigneddepartment",ticket.assignedDepartment },
+                //{"parmforwarddepartment",ticket.forwardDepartment },
+                //{"parmforwardto",ticket.forwardTo },
+                //{"parmremarks",ticket.forwardRemarks },
+                //{"parmstatus",ticket.status },
+                //{"parmforwardedby", account.USR_ID}
+
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
                 {"parmticketno",ticket.ticketNo },
-                {"parmassigneddepartment",ticket.assignedDepartment },
                 {"parmforwarddepartment",ticket.forwardDepartment },
+                {"parmforwardcategory",ticket.forwardCategory },
                 {"parmforwardto",ticket.forwardTo },
                 {"parmremarks",ticket.forwardRemarks },
                 {"parmstatus",ticket.status },

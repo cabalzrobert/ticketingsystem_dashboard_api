@@ -13,14 +13,14 @@ using webapi.App.TSDashboardModel;
 
 namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemController.Features
 {
-    [Route("app/v1/ticketingdashboard/head")]
+    [Route("app/v1/ticketingdashboard/user")]
     [ApiController]
     [ServiceFilter(typeof(SubscriberAuthenticationAttribute))]
-    public class DepartmentHeadController: ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IDepartmentHeadRepository _repo;
+        private readonly IUserRepository _repo;
         private readonly IConfiguration _config;
-        public DepartmentHeadController(IConfiguration config, IDepartmentHeadRepository repo)
+        public UserController(IConfiguration config, IUserRepository repo)
         {
             _config = config;
             _repo = repo;
@@ -115,17 +115,6 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 
         [HttpPost]
         [Route("ticket/cancel")]
-        public async Task<IActionResult> DeclineTicket(string ticketNo)
-        {
-            var result = await _repo.DeclineTicket(ticketNo);
-            if (result.result == Results.Success)
-                return Ok(new { Status = "ok", message = result.message });
-            return BadRequest();
-
-        }
-
-        [HttpPost]
-        [Route("ticket/dismiss")]
         public async Task<IActionResult> CancelTicket(string ticketNo)
         {
             var result = await _repo.CancelTicket(ticketNo);

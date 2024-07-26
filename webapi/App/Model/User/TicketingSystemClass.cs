@@ -68,8 +68,11 @@ namespace webapi.App.Model.User
     {
         public string TicketNo;
         public string TransactionNo;
+        public string Department;
+        public string DepartmentName;
         public string Category;
         public string Categoryname;
+        public string Personnel;
         public string TitleTicket;
         public string TicketDescription;
         public string PriorityLevel;

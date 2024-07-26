@@ -205,7 +205,7 @@ namespace webapi.App.Aggregates.Common.Dto
             //o.isAssigned = textInfo.ToLower(data["isAssigned"].Str());
             o.isAssigned = Convert.ToBoolean(data["isAssigned"]);
             o.Attachment = data["ATTCHMNT"].Str();
-            o.DepartmenID = data["DepartmentID"].Str();
+            o.Department = data["DepartmentID"].Str();
             o.DepartmentName = data["DepartmentName"].Str();
             o.isRead = Convert.ToBoolean(data["S_OPN"]);
             return o;

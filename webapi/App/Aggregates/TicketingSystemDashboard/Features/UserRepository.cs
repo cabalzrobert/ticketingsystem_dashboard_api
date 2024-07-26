@@ -13,8 +13,8 @@ using webapi.App.Features.UserFeature;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
-    [Service.ITransient(typeof(DepartmentHeadRepository))]
-    public interface IDepartmentHeadRepository
+    [Service.ITransient(typeof(UserRepository))]
+    public interface IUserRepository
     {
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
         Task<(Results result, object tickets)> GetTickets(FilterTickets param);
@@ -23,7 +23,6 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, object personnels)> LoadPersonnels(string id);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
-        Task<(Results result, string message)> DeclineTicket(string ticketNo);
         Task<(Results result, string message)> CancelTicket(string ticketNo);
         Task<(Results result, object comments)> GetComments(string transactionNo);
 
@@ -33,12 +32,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, object tickets)> GetTickets(int row); // test only
 
     }
-    public class DepartmentHeadRepository : IDepartmentHeadRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ISubscriber _account;
         private readonly IRepository _repo;
         private TicketingUser account { get { return _account.AccountIdentity(); } }
-        public DepartmentHeadRepository(IRepository repo, ISubscriber account) 
+        public UserRepository(IRepository repo, ISubscriber account) 
         {
             _account = account;
             _repo= repo;
@@ -70,7 +69,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, object tickets)> GetTickets(FilterTickets param)
         {
-            var results = _repo.DSpQuery<dynamic>("dbo.spfn_HEADTICKETS", new Dictionary<string, object>()
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_USERTICKETS", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
@@ -135,6 +134,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
+                {"parmuserid", account.USR_ID},
                 {"parmticketno",ticket.ticketNo }
             }).FirstOrDefault();
 
@@ -182,29 +182,11 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<(Results result, string message)> DeclineTicket(string ticketNo)
+        public async Task<(Results result, string message)> CancelTicket(string ticketNo)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_CANCELTICKET", new Dictionary<string, object>()
             {
-                {"parmuserid", account.USR_ID},
-                {"parmticketno", ticketNo }
-            }).FirstOrDefault();
-
-            var row = (IDictionary<string, object>)results;
-            string resultCode = row["RESULT"].Str();
-            if (resultCode == "1")
-                return (Results.Success, "Success");
-            else if (resultCode == "0")
-                return (Results.Failed, "Failed");
-            return (Results.Null, null);
-
-        }
-
-        public async Task<(Results result, string message)> CancelTicket(string ticketNo)
-        {
-            var results = _repo.DSpQuery<dynamic>("dbo.spfn_DISMISSTICKET", new Dictionary<string, object>()
-            {
-                {"parmuserid", account.USR_ID},
+                {"parmuserid", account.USR_ID },
                 {"parmticketno", ticketNo }
             }).FirstOrDefault();
 
@@ -222,25 +204,15 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_FORWARDTICKET", new Dictionary<string, object>()
             {
-                //{"parmplid", "0002"},
-                //{"parmpgrpid","001" },
-                //{"parmticketno",ticket.ticketNo },
-                //{"parmassigneddepartment",ticket.assignedDepartment },
-                //{"parmforwarddepartment",ticket.forwardDepartment },
-                //{"parmforwardto",ticket.forwardTo },
-                //{"parmremarks",ticket.forwardRemarks },
-                //{"parmstatus",ticket.status },
-                //{"parmforwardedby", "00020010000001"}
-
-                {"parmplid", account.PL_ID},
-                {"parmpgrpid", account.PGRP_ID},
+                {"parmplid", "0002"},
+                {"parmpgrpid","001" },
                 {"parmticketno",ticket.ticketNo },
+                {"parmassigneddepartment",ticket.assignedDepartment },
                 {"parmforwarddepartment",ticket.forwardDepartment },
-                {"parmforwardcategory",ticket.forwardCategory },
                 {"parmforwardto",ticket.forwardTo },
                 {"parmremarks",ticket.forwardRemarks },
                 {"parmstatus",ticket.status },
-                {"parmforwardedby", account.USR_ID}
+                {"parmforwardedby", "00020010000001"}
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;

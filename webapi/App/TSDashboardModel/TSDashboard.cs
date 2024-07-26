@@ -55,6 +55,7 @@ namespace webapi.App.TSDashboardModel
         public string[] attachment;
         public Int16 priorityLevel;
         public string forwardDepartment;
+        public string forwardCategory;
         public string forwardTo;
         public string forwardRemarks;
         public string assignedDepartment;
