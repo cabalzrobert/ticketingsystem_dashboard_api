@@ -114,6 +114,17 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
         }
 
         [HttpPost]
+        [Route("ticket/hdresolve")]
+        public async Task<IActionResult> HDResolveTicket(string ticketNo)
+        {
+            var result = await _repo.HDResolveTicket(ticketNo);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", message = result.message });
+            return BadRequest();
+
+        }
+
+        [HttpPost]
         [Route("ticket/cancel")]
         public async Task<IActionResult> DeclineTicket(string ticketNo)
         {

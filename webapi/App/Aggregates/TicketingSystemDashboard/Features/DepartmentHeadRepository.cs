@@ -23,6 +23,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, object personnels)> LoadPersonnels(string id);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
+        Task<(Results result, string message)> HDResolveTicket(string ticketNo);
         Task<(Results result, string message)> DeclineTicket(string ticketNo);
         Task<(Results result, string message)> CancelTicket(string ticketNo);
         Task<(Results result, object comments)> GetComments(string transactionNo);
@@ -168,6 +169,24 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
+                {"parmuserid", account.USR_ID},
+                {"parmticketno", ticketNo }
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+                return (Results.Success, "Success");
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed");
+            return (Results.Null, null);
+
+        }
+
+        public async Task<(Results result, string message)> HDResolveTicket(string ticketNo)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_HDRESOLVETICKET", new Dictionary<string, object>()
+            {
                 {"parmuserid", account.USR_ID},
                 {"parmticketno", ticketNo }
             }).FirstOrDefault();
