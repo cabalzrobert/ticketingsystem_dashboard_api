@@ -1362,6 +1362,12 @@ namespace webapi.App.Aggregates.Common
             return o;
         }
 
+        public static IDictionary<string, object> RequestForwardTicket(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            //o.Ticket
+            return o;
+        }
 
         public static IDictionary<string, object> RequestTicketNotification(IDictionary<string, object> data)
         {

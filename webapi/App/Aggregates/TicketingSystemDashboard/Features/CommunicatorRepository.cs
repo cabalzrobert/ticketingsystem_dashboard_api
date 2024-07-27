@@ -105,13 +105,29 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //for pusher function department head receiver
-                await PostTicketRequest(results, ticket.assignedDepartment);
+                //await PostTicketRequest(results, ticket.assignedDepartment);
+                await PostForwardTicket(results, ticket.forwardTo, ticket.forwardDepartment);
+                await RequestorTicket(results, row["requestId"].Str());
+
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
+        }
+
+        public async Task<bool> PostForwardTicket(IDictionary<string, object> data, string forwardto, string forwardDepartment)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardDepartment}/{forwardto}/forwardticket",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+        public async Task<bool> RequestorTicket(IDictionary<string, object> data, string requestorid)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{requestorid}/forwardticket",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
         }
 
         public async Task<(Results result, string message)> ConfirmationForwardTicket(TicketInfo ticket)
