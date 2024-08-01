@@ -76,7 +76,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.UserAcc
                 if (json["status"].Str() != "error")
                 {
                     //string url = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
-                    request.ImageUrl = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
+                    request.ImageUrl = json["url"].Str().Replace("https://119.92.80.34", "http://119.92.80.34:50000");
+                    //request.ImageUrl = json["url"].Str();
                     //request.ImageUrl = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
                     return (Results.Success, null);
                 }

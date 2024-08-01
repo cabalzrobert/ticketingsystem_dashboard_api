@@ -55,6 +55,7 @@ namespace webapi.App.Model.User
         public string Gender;
         public string Birthdate;
         public string MobileNumber;
+        public string Email;
         public string Address;
         public string ProfilePicture;
         public string IMGURL;

@@ -136,6 +136,7 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Name = data["FLL_NM"].Str();
             o.Birthdate = data["BRT_DT"].Str();
             o.MobileNumber = data["MOB_NO"].Str();
+            o.Email = data["EML_ADD"].Str();
             o.DepartmentID = data["DEPT_ID"].Str();
             o.Department = data["DEPT_DESCR"].Str();
             o.RolesID = data["ROLES_ID"].Str();

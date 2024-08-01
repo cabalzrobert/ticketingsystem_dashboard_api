@@ -155,6 +155,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
+                {"parmuserid", account.USR_ID},
                 {"parmdeptid", id }
             });
             if (results != null)

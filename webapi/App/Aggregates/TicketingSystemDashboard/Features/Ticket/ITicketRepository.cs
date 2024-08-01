@@ -11,6 +11,9 @@ using Comm.Commons.Extensions;
 using webapi.App.RequestModel.Common;
 using webapi.App.Aggregates.Common.Dto;
 using webapi.App.Features.UserFeature;
+using webapi.Services.Dependency;
+using System.Net.Mail;
+using System.Net;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
 {
@@ -32,17 +35,24 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
     {
         private readonly ISubscriber _identity;
         private readonly IRepository _repo;
+        private readonly IFileData _fd;
         public TicketingUser account { get { return _identity.AccountIdentity(); } }
-        public TicketRepository(ISubscriber identity, IRepository repo)
+        public TicketRepository(ISubscriber identity, IRepository repo, IFileData fd)
         {
             _identity = identity;
             _repo = repo;
+            _fd = fd;
         }
 
         public async Task<(Results result, string message)> SaveTicketAsync(TicketModel request)
         {
-            request.TicketNo = ((int)DateTime.Now.ToTimeMillisecond()).ToString("X");
-            var result = _repo.DSpQueryMultiple("dbo.spfn_AEARP0A", new Dictionary<string, object>(){
+            string supportAccount = _fd.String("Company:Support");
+            var split = supportAccount.Split(':');
+            if (split.Length == 2)
+            {
+                string guser = split[0], gpass = split[1];
+                request.TicketNo = ((int)DateTime.Now.ToTimeMillisecond()).ToString("X");
+                var result = _repo.DSpQueryMultiple("dbo.spfn_AEARP0A", new Dictionary<string, object>(){
                 { "parmplid", account.PL_ID },
                 { "parmpgrpid", account.PGRP_ID },
                 { "parmuserid", account.USR_ID },
@@ -56,30 +66,40 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 { "parmxattchmnt", request.iTicketAttachment },
                 { "parmprioritylevel", request.PriorityLevel }
             }).ReadSingleOrDefault();
-            if (result != null)
-            {
-                var row1 = ((IDictionary<string, object>)result);
-                string ResultCode = row1["RESULT"].Str();
-                if (ResultCode == "1")
+                if (result != null)
                 {
-                    request.TransactionNo = row1["transactionNo"].Str();
-                    request.TicketNo = row1["ticketNo"].Str();
-                    request.IssuedDate = row1["dateCreated"].Str();
-                    request.CreatedDate = Convert.ToDateTime(row1["dateCreated"].Str()).ToString("MMM dd, yyyy");
-                    request.Status = row1["status"].Str();
-                    request.Statusname = row1["ticketStatus"].Str();
-                    request.TicketStatus = row1["status"].Str();
-                    request.TicketStatusname = row1["ticketStatus"].Str();
-                    if (account.ACT_TYP == "6")
-                        await PostTicketRequestorHead(result);
-                    if (account.ACT_TYP == "5")
-                        await PostTicketRequestCommunicator(result);
-                    return (Results.Success, "Successfully save.");
+                    var row1 = ((IDictionary<string, object>)result);
+                    string ResultCode = row1["RESULT"].Str();
+                    if (ResultCode == "1")
+                    {
+                        request.TransactionNo = row1["transactionNo"].Str();
+                        request.TicketNo = row1["ticketNo"].Str();
+                        request.IssuedDate = row1["dateCreated"].Str();
+                        request.CreatedDate = Convert.ToDateTime(row1["dateCreated"].Str()).ToString("MMM dd, yyyy");
+                        request.Status = row1["status"].Str();
+                        request.Statusname = row1["ticketStatus"].Str();
+                        request.TicketStatus = row1["status"].Str();
+                        request.TicketStatusname = row1["ticketStatus"].Str();
+                        string stremail = row1["Email_Address"].Str();
+                        if (!stremail.IsEmpty())
+                        {
+                            //var resAsync = await PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str());
+                            await PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str());
+                        }
+
+                        if (account.ACT_TYP == "6")
+                            await PostTicketRequestorHead(result);
+                        if (account.ACT_TYP == "5")
+                            await PostTicketRequestCommunicator(result);
+                        return (Results.Success, "Successfully save.");
+                    }
+                    else if (ResultCode == "0")
+                        return (Results.Failed, "Please check data. Try again");
                 }
-                else if (ResultCode == "0")
-                    return (Results.Failed, "Please check data. Try again");
+                return (Results.Null, null);
             }
-            return (Results.Null, null);
+
+            return (Results.Failed, "Support account not set, please contact to your Administrator Account");
         }
         public async Task<(Results result, string message)> UpdateTicketAsync(TicketModel request)
         {
@@ -307,6 +327,88 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 return (Results.Success, row["isAssigned"].Str());
             }
             return (Results.Null, null);
+        }
+
+        //Send Email to Department Head, Communicator and Assigned Personnel
+        private async Task<(Results result, String message)> PrepareSendingToGmail(TicketModel request, String gUser, String gPass, String to_emailaddress)
+        {
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(gUser);
+            message.To.Add(to_emailaddress);
+            message.Subject = $"{account.FLL_NM} send Request with Ticketing No.: (" + request.TicketNo + ")";
+            message.IsBodyHtml = true;
+            message.Body = getBodyFullMessageProblemRequest(request);
+            return await TrySendToGmail(request, gUser, gPass, message);
+        }
+        private async Task<(Results result, String message)> TrySendToGmail(TicketModel request, String gUser, String gPass, MailMessage message, int attemp = 5)
+        {
+            try
+            {
+                using (var stmp = new SmtpClient
+                {
+                    Host = "smtp.mail.yahoo.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential(gUser, gPass),
+                    Timeout = 20000,
+                })
+                {
+                    stmp.Send(message);
+                    //stmp.Send(gUser, gUser, "Abacos Report Problem (" + request.TicketNo + ")", getBodyFullMessageProblemRequest(request));
+                    /*
+			SendEmailExternal(GlobalEmailSupport,"Abacos Report Problem (" + ticketno + ")", htmlString);
+			SendDirectSMS(userid,"Thank you for contacting us. This is an automated response confirming the receipt of your ticket ID: "+ticketno+". One of our agents will get back to you as soon as possible.");
+			SendSMSDirectMobile(GlobalMobileSupport, "You have new reported problem of Abacos App with ticket ID: "+ticketno+". please check your admin support email to view full report details");
+                    */
+                    return (Results.Success, "Problem successfully reported");
+                }
+            }
+            catch (Exception ex)
+            {
+                String exMessage = ex.Message;
+            }
+            if (attemp > 0)
+                return await TrySendToGmail(request, gUser, gPass, message, attemp - 1);
+            return (Results.Failed, "Cannot send right now, please try again later");
+        }
+
+        private string getBodyFullMessageProblemRequest(TicketModel request)
+        {
+            string htmlAttachment = "";
+            if (!request.iTicketAttachment.IsEmpty())
+            {
+                foreach (var attachment in request.TicketAttachment)
+                    htmlAttachment += (htmlAttachment.IsEmpty() ? "" : "<br/>") + ($"<a href='{ attachment }' target='_blank'>{ attachment }</a>");
+                htmlAttachment = $"<tr><td><b>Attachment(s): </b></td><td>{ htmlAttachment }</td></tr>";
+            }
+            return $@"
+                <!DOCTYPE html>
+                <html><head>
+                <style type='text/css'>
+                body{{ font-family: Helvetica, Verdana; font-size:2vw; color: #4d4c4c; margin: 0; }}
+                table{{ border-collapse: collapse; border: 1px solid #d1d1d1; width: 100% }}
+                td{{ border: 1px solid #d1d1d1; padding: 5px 10px; border: 1px solid #d1d1d1; }}
+                tr{{ padding: 2px }}
+                h1,h2,h3,h4{{ margin: 2px; vertical-align: bottom; }}
+                </style>
+                </head>
+                <body>
+                <div style='margin: 10px' align='center'>
+                    <table cellspacing='0' cellpadding='0'>
+                        <tr><td colspan='2' align='center'><h3>Account Information</h3></td></tr>
+                        <tr><td><b>Account #:</b></td><td>{ account.USR_ID }</td></tr>
+                        <tr><td><b>Account Name:</b></td><td>{ request.Personnel }</td></tr>
+                        <tr><td><b>Address: </b></td><td>{ request.DepartmentName }</td></tr>
+                        <tr><td colspan='2'><h3>Reported Problem</h3></td></tr>
+                        <tr><td><b>Subject: </b></td><td>{ request.TitleTicket }</td></tr>
+                        <tr><td><b>Problem: </b></td><td>{ request.TicketDescription }</td></tr>
+                        { htmlAttachment }
+                    </table>
+                </div>
+                </body>
+                </html>";
         }
     }
 }

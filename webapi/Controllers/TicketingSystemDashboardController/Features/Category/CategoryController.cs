@@ -49,5 +49,16 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Categor
                 return Ok(new { Status = "error", category = result.cat });
             return NotFound();
         }
+        [HttpPost]
+        [Route("listbydepartment")]
+        public async Task<IActionResult> TaskListbyDepartment([FromBody] FilterRequest request)
+        {
+            var result = await _repo.LoadCategorybyDepartmentAsync(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", category = result.cat });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", category = result.cat });
+            return NotFound();
+        }
     }
 }

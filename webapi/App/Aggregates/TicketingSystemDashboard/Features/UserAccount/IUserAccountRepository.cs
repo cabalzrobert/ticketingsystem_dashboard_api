@@ -49,6 +49,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmgender", request.Gender},
                 {"parmbirthdate", request.Birthdate},
                 {"parmmobilenumber", request.MobileNumber},
+                {"parmemail", request.Email},
                 {"parmaddress", request.Address},
                 {"parmprofilepictureURL", request.IMGURL},
                 {"@parmusername", ""},
@@ -100,6 +101,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                 {"parmgender", request.Gender},
                 {"parmbirthdate", request.Birthdate},
                 {"parmmobilenumber", request.MobileNumber},
+                {"parmemail", request.Email},
                 {"parmaddress", request.Address},
                 {"@parmaccounttype", request.AccountType},
                 {"parmprofilepictureURL", request.ImageUrl},
@@ -124,6 +126,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.UserAccount
                     return (Results.Failed, "Already Exist. Try again");
                 else if (ResultCode == "0")
                     return (Results.Failed, "Please check data. Try again");
+                else if (ResultCode == "6")
+                    return (Results.Failed, "Email Address already Exist. Try again");
             }
             return (Results.Null, null);
         }
