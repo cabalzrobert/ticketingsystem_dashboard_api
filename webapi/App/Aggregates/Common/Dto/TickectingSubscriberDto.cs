@@ -235,6 +235,7 @@ namespace webapi.App.Aggregates.Common.Dto
             dynamic o = Dynamic.Object;
             o.UnAssigned = data["UN_ASSIGNED"].Str();
             o.Assigned = data["ASSIGNED"].Str();
+            o.Ressolved = data["RESSOLVED"].Str();
             o.AllTicketCount = data["ALL_TICKET"].Str();
             return o;
         }

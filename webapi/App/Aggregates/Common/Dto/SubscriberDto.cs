@@ -1400,7 +1400,9 @@ namespace webapi.App.Aggregates.Common
 
             o.forwardRemarks = data["forwardRemarks"].Str();
             o.isForwarded = data["isForwarded"].Str();
-            o.status = data["status"].Str();
+            o.status = Convert.ToInt32(data["status"].Str());
+            o.isAssigned = Convert.ToBoolean(data["isAssigned"]);
+            o.ticketStatusId = Convert.ToInt32(data["TCKT_STAT"]);
             o.ticketStatus = data["ticketStatus"].Str();
             o.dateCreated = data["dateCreated"].Str();
 

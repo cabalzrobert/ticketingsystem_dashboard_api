@@ -272,7 +272,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Call 
-                await PostForwardTicket(results, row["forwardTo"].Str(), ticket.forwardDepartment);
+                await PostForwardTicket(results, row["forwardTo"].Str());
                 await RequestorTicket(results, row["requestId"].Str());
                 return (Results.Success, "Success");
             }
@@ -283,15 +283,15 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<bool> PostForwardTicket(IDictionary<string, object> data, string forwardto, string forwardDepartment)
+        public async Task<bool> PostForwardTicket(IDictionary<string, object> data, string forwardto)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardDepartment}/{forwardto}/forwardticket",
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/forwardticket",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
             return true;
         }
         public async Task<bool> RequestorTicket(IDictionary<string, object> data, string requestorid)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{requestorid}/forwardticket",
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{requestorid}/requestor",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
             return true;
         }
