@@ -106,6 +106,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid",account.PGRP_ID},
                 {"parmticketno",ticket.ticketNo },
+                {"parmdepartment",account.DEPT_ID },
+                {"parmcategory",ticket.categoryId },
                 {"parmassignedto",ticket.assignedTo },
                 {"parmuserid", account.USR_ID }
             }).FirstOrDefault();
