@@ -19,13 +19,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
         Task<(Results result, object tickets)> GetTickets(FilterTickets param);
         Task<(Results result, string message)> AssignedTicket(TicketInfo ticket);
-        Task<(Results result, string message)> ReturnTicket(TicketInfo ticket);
+        Task<(Results result, string message)> ReturnTicket(string ticketNo);
         Task<(Results result, object personnels)> LoadPersonnels(string id);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
         Task<(Results result, string message)> HDResolveTicket(string ticketNo);
         Task<(Results result, string message)> DeclineTicket(string ticketNo);
-        Task<(Results result, string message)> CancelTicket(string ticketNo);
+        Task<(Results result, string message)> CancelTicket(CancelInfo cancelInfo);
         Task<(Results result, object comments)> GetComments(string transactionNo);
 
         Task<(Results result, object cntticket)> LoadCntTicketAsync(string id);
@@ -130,13 +130,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             return true;
         }
 
-        public async Task<(Results result, string message)> ReturnTicket(TicketInfo ticket)
+        public async Task<(Results result, string message)> ReturnTicket(string ticketNo)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_RETURNTICKET", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
-                {"parmticketno",ticket.ticketNo }
+                {"parmuserid", account.USR_ID},
+                {"parmticketno", ticketNo }
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;
@@ -220,12 +221,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<(Results result, string message)> CancelTicket(string ticketNo)
+        public async Task<(Results result, string message)> CancelTicket(CancelInfo cancelInfo)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_DISMISSTICKET", new Dictionary<string, object>()
             {
                 {"parmuserid", account.USR_ID},
-                {"parmticketno", ticketNo }
+                {"parmticketno", cancelInfo.ticketNo },
+                {"parmrfc", cancelInfo.RFC }
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;
@@ -268,7 +270,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Call 
-                await PostForwardTicket(results, ticket.forwardTo, ticket.forwardDepartment);
+                await PostForwardTicket(results, row["forwardTo"].Str(), ticket.forwardDepartment);
                 await RequestorTicket(results, row["requestId"].Str());
                 return (Results.Success, "Success");
             }

@@ -73,5 +73,11 @@ namespace webapi.App.TSDashboardModel
         public string search;
     }
 
+    public class CancelInfo
+    {
+        public string ticketNo;
+        public string RFC;
+    }
+
 }
 

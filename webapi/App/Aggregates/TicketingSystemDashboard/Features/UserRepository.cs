@@ -19,7 +19,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
         Task<(Results result, object tickets)> GetTickets(FilterTickets param);
         Task<(Results result, string message)> AssignedTicket(TicketInfo ticket);
-        Task<(Results result, string message)> ReturnTicket(TicketInfo ticket);
+        Task<(Results result, string message)> ReturnTicket(string ticketNo);
         Task<(Results result, object personnels)> LoadPersonnels(string id);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
         Task<(Results result, string message)> ResolveTicket(string ticketNo);
@@ -128,14 +128,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             return true;
         }
 
-        public async Task<(Results result, string message)> ReturnTicket(TicketInfo ticket)
+        public async Task<(Results result, string message)> ReturnTicket(string ticketNo)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_RETURNTICKET", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
                 {"parmpgrpid", account.PGRP_ID},
                 {"parmuserid", account.USR_ID},
-                {"parmticketno",ticket.ticketNo }
+                {"parmticketno", ticketNo }
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;

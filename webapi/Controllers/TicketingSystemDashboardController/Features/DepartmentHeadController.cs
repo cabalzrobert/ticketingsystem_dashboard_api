@@ -70,9 +70,9 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 
         [HttpPost]
         [Route("ticket/return")]
-        public async Task<IActionResult> ReturnTicket(TicketInfo ticket)
+        public async Task<IActionResult> ReturnTicket(string ticketNo)
         {
-            var result = await _repo.ReturnTicket(ticket);
+            var result = await _repo.ReturnTicket(ticketNo);
             if (result.result == Results.Success)
                 return Ok(new { Status = "ok", message = result.message });
             return BadRequest();
@@ -137,9 +137,9 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
 
         [HttpPost]
         [Route("ticket/dismiss")]
-        public async Task<IActionResult> CancelTicket(string ticketNo)
+        public async Task<IActionResult> CancelTicket([FromBody] CancelInfo cancelInfo)
         {
-            var result = await _repo.CancelTicket(ticketNo);
+            var result = await _repo.CancelTicket(cancelInfo);
             if (result.result == Results.Success)
                 return Ok(new { Status = "ok", message = result.message });
             return BadRequest();
