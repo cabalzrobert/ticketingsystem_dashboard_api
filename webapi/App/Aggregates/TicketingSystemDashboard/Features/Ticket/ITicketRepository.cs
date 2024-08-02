@@ -400,7 +400,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                         <tr><td colspan='2' align='center'><h3>Account Information</h3></td></tr>
                         <tr><td><b>Account #:</b></td><td>{ account.USR_ID }</td></tr>
                         <tr><td><b>Account Name:</b></td><td>{ request.Personnel }</td></tr>
-                        <tr><td><b>Address: </b></td><td>{ request.DepartmentName }</td></tr>
+                        <tr><td><b>Department: </b></td><td>{ request.DepartmentName }</td></tr>
                         <tr><td colspan='2'><h3>Reported Problem</h3></td></tr>
                         <tr><td><b>Subject: </b></td><td>{ request.TitleTicket }</td></tr>
                         <tr><td><b>Problem: </b></td><td>{ request.TicketDescription }</td></tr>
