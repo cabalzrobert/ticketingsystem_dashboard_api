@@ -10,6 +10,8 @@ using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
 using webapi.App.Features.UserFeature;
+using webapi.Services;
+using webapi.Services.Dependency;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -38,11 +40,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
     {
         private readonly ISubscriber _account;
         private readonly IRepository _repo;
+        private readonly IFileData _fd;
         private TicketingUser account { get { return _account.AccountIdentity(); } }
-        public DepartmentHeadRepository(IRepository repo, ISubscriber account) 
+        public DepartmentHeadRepository(IRepository repo, ISubscriber account, IFileData fd) 
         {
             _account = account;
             _repo= repo;
+            _fd= fd;
         }
 
         public async Task<(Results result, string message)> CreateTicket(TicketInfo ticket)
@@ -101,6 +105,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> AssignedTicket(TicketInfo ticket)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_ASSIGNTICKET", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
@@ -109,13 +115,17 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 {"parmdepartment",account.DEPT_ID },
                 {"parmcategory",ticket.categoryId },
                 {"parmassignedto",ticket.assignedTo },
-                {"parmuserid", account.USR_ID }
+                {"parmuserid", account.USR_ID },
+                {"parmremarks", ticket.forwardRemarks }
             }).FirstOrDefault();
 
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
             {
+                //Email Service
+                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Ticket no. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["assignedEmail"].Str());
+
                 await PostTicketRequest(results, ticket.assignedTo);
                 return (Results.Success, "Success");
             }
@@ -134,6 +144,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> ReturnTicket(string ticketNo)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_RETURNTICKET", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
@@ -145,7 +157,15 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                //Email Service
+                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request Ticket no. #{row["ticketNo"].Str()} for resolve", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+
+                //Notification
+                await PostForwardTicket(results, row["forwardTo"].Str());
+
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
@@ -169,6 +189,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> ResolveTicket(string ticketNo)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_RESOLVETICKET", new Dictionary<string, object>()
             {
                 {"parmplid", account.PL_ID},
@@ -180,7 +202,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                //Email Service
+                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
@@ -225,6 +252,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> CancelTicket(CancelInfo cancelInfo)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_DISMISSTICKET", new Dictionary<string, object>()
             {
                 {"parmuserid", account.USR_ID},
@@ -235,7 +264,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                //Email Service
+                //EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
@@ -244,6 +278,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> ForwardTicket(TicketInfo ticket)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_FORWARDTICKET", new Dictionary<string, object>()
             {
                 //{"parmplid", "0002"},
@@ -271,6 +307,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
             {
+                //Email Service
+                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+
                 //Call 
                 await PostForwardTicket(results, row["forwardTo"].Str());
                 await RequestorTicket(results, row["requestId"].Str());

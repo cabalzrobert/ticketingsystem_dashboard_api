@@ -141,7 +141,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                //Notification
+                //await PostForwardTicket(results, row["forwardTo"].Str());
+
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
