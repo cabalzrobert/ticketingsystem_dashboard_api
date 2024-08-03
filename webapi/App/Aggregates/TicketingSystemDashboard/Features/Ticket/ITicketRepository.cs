@@ -251,6 +251,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             }
             return (Results.Null, null);
         }
+        public async Task<bool> PostTicketRequestorSendComment(IDictionary<string, object> data)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/5/{account.DEPT_ID}/requestorhead/",
+                new { type = "requestorhead-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
 
         public async Task<(Results result, string message)> TestNotificationAsyn()
         {
@@ -397,7 +403,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 <body>
                 <div style='margin: 10px' align='center'>
                     <table cellspacing='0' cellpadding='0'>
-                        <tr><td colspan='2' align='center'><h3>Account Information</h3></td></tr>
+                        <tr><td colspan='2' align='center'><h3>Ticket Information</h3></td></tr>
                         <tr><td><b>Account #:</b></td><td>{ account.USR_ID }</td></tr>
                         <tr><td><b>Account Name:</b></td><td>{ request.Personnel }</td></tr>
                         <tr><td><b>Department: </b></td><td>{ request.DepartmentName }</td></tr>
