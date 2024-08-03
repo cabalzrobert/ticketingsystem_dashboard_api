@@ -10,6 +10,8 @@ using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
 using webapi.App.Features.UserFeature;
+using webapi.Services;
+using webapi.Services.Dependency;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -27,11 +29,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
     {
         private readonly ISubscriber _account;
         private readonly IRepository _repo;
+        private readonly IFileData _fd;
         private TicketingUser account { get { return _account.AccountIdentity(); } }
-        public CommunicatorRepository(IRepository repo, ISubscriber account)
+        public CommunicatorRepository(IRepository repo, ISubscriber account, IFileData fd)
         {
             _account = account;
             _repo = repo;
+            _fd = fd;
         }
 
         public async Task<(Results result, string message)> CreateTicket(TicketInfo ticket)
@@ -77,6 +81,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<(Results result, string message)> ForwardTicket(TicketInfo ticket)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_FORWARDTICKET", new Dictionary<string, object>()
             {
                 //{"parmplid", account.PL_ID},
@@ -104,6 +110,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
             {
+                //Email Service
+                Timeout.Set(() => EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()), 275);
+
                 //for pusher function department head receiver
                 //await PostTicketRequest(results, ticket.assignedDepartment);
                 await PostForwardTicket(results, ticket.forwardTo, ticket.forwardDepartment);

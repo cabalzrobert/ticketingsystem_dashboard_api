@@ -12,6 +12,7 @@ using webapi.App.Aggregates.Common.Dto;
 using webapi.App.Features.UserFeature;
 using webapi.Services;
 using webapi.Services.Dependency;
+using System.Threading;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -124,7 +125,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Ticket no. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["assignedEmail"].Str());
+                Timeout.Set(()=>EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Ticket no. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["assignedEmail"].Str()),275);
 
                 await PostTicketRequest(results, ticket.assignedTo);
                 return (Results.Success, "Success");
@@ -159,7 +160,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request Ticket no. #{row["ticketNo"].Str()} for resolve", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+                Timeout.Set(()=>EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request Ticket no. #{row["ticketNo"].Str()} for resolve", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()),275);
 
                 //Notification
                 await PostForwardTicket(results, row["forwardTo"].Str());
@@ -204,7 +205,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+               Timeout.Set(()=>EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()),275);
 
                 return (Results.Success, "Success");
             }
@@ -308,7 +309,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-                EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
+                Timeout.Set(()=>EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()),275);
 
                 //Call 
                 await PostForwardTicket(results, row["forwardTo"].Str());
