@@ -10,6 +10,8 @@ using webapi.App.Aggregates.Common;
 using webapi.App.RequestModel.AppRecruiter;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
+using webapi.Services;
+using webapi.Services.Dependency;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard
 {
@@ -24,9 +26,11 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
     public class AccountRepository:IAccountRepository
     {
         private readonly IRepository _repo;
-        public AccountRepository(IRepository repo)
+        private readonly IFileData _fd;
+        public AccountRepository(IRepository repo, IFileData fd)
         {
             _repo = repo;
+            _fd = fd;
         }
 
         public async Task<(Results result, string message, TicketingUser account)> DashboardSignInAsync(TicketingSignInRequest request)
@@ -107,6 +111,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
 
         public async Task<(Results result, string message, string otp)> SendOTP(SendOtp sendOtp)
         {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_SENDOTP", new Dictionary<string, object>()
             {
                 {"parmusrid", sendOtp.UserId},
@@ -116,7 +122,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                //Email Service
+                EmailServices.PrepareSendingToGmail(null, "Your Verification Code", new { otp = row["OTP"].Str() }, splitAccount[0], splitAccount[1], row["email"].Str());
+
                 return (Results.Success, "Success", row["OTP"].Str());
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed", null);
             return (Results.Null, null, null);
