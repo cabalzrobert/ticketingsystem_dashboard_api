@@ -111,7 +111,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-                Timeout.Set(() => EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()), 275);
+                Timeout.Set(() => EmailServices.PrepareSendingToGmail("forward", $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()), 275);
 
                 //for pusher function department head receiver
                 //await PostTicketRequest(results, ticket.assignedDepartment);

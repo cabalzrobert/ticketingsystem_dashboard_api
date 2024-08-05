@@ -10,7 +10,7 @@ namespace webapi.Services
 {
     public static class EmailServices
     {
-        public static async Task<(Results result, String message)> PrepareSendingToGmail(string senderName,string subject, dynamic request, String gUser, String gPass, String to_emailaddress)
+        public static async Task<(Results result, String message)> PrepareSendingToGmail(string emailType,string subject, dynamic request, String gUser, String gPass, String to_emailaddress)
         {
 
             MailMessage message = new MailMessage();
@@ -18,10 +18,10 @@ namespace webapi.Services
             message.To.Add(to_emailaddress);
             message.Subject = subject;
             message.IsBodyHtml = true;
-            message.Body = getBodyFullMessageProblemRequest(request);
+            message.Body = (emailType=="otp")?getOtpMessage(request):getBodyFullMessageProblemRequest(request);
             return await TrySendToGmail(request, gUser, gPass, message);
         }
-        public static async Task<(Results result, String message)> TrySendToGmail(dynamic request, String gUser, String gPass, MailMessage message, int attemp = 5)
+        private static async Task<(Results result, String message)> TrySendToGmail(dynamic request, String gUser, String gPass, MailMessage message, int attemp = 5)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace webapi.Services
             return (Results.Failed, "Cannot send right now, please try again later");
         }
 
-        public static string getBodyFullMessageProblemRequest(dynamic request)
+        private static string getBodyFullMessageProblemRequest(dynamic request)
         {
             string htmlAttachment = "";
             //if (!request.iTicketAttachment.IsEmpty())
@@ -88,6 +88,35 @@ namespace webapi.Services
                         <tr><td><b>Subject: </b></td><td>{request.title}</td></tr>
                         <tr><td><b>Detail: </b></td><td>{request.description}</td></tr>
                     </table>
+                </div>
+                </body>
+                </html>";
+        }
+
+        private static string getOtpMessage(dynamic request)
+        {
+            string htmlAttachment = "";
+            //if (!request.iTicketAttachment.IsEmpty())
+            //{
+            //    foreach (var attachment in request.TicketAttachment)
+            //        htmlAttachment += (htmlAttachment.IsEmpty() ? "" : "<br/>") + ($"<a href='{attachment}' target='_blank'>{attachment}</a>");
+            //    htmlAttachment = $"<tr><td><b>Attachment(s): </b></td><td>{htmlAttachment}</td></tr>";
+            //}
+            return $@"
+                <!DOCTYPE html>
+                <html><head>
+                <style type='text/css'>
+                body{{ font-family: Helvetica, Verdana; font-size:2vw; color: #4d4c4c; margin: 0; }}
+                table{{ border-collapse: collapse; border: 1px solid #d1d1d1; width: 100% }}
+                td{{ border: 1px solid #d1d1d1; padding: 5px 10px; border: 1px solid #d1d1d1; }}
+                tr{{ padding: 2px }}
+                h1,h2,h3,h4{{ margin: 2px; vertical-align: bottom; }}
+                </style>
+                </head>
+                <body>
+                <h2>OTP</h2>
+                <div><p>Your 6 digit code {request.otp}</p></div>
+                <div style='margin: 10px' align='center'>
                 </div>
                 </body>
                 </html>";
