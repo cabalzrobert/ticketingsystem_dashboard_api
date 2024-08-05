@@ -84,7 +84,9 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                         if (!stremail.IsEmpty())
                         {
                             //var resAsync = await PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str());
-                            await PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str());
+                            //await PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str());
+                            Timeout.Set(() => PrepareSendingToGmail(request, guser, gpass, row1["Email_Address"].Str()));
+
                         }
 
                         if (account.ACT_TYP == "6")
@@ -244,6 +246,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     /*
                     function to send comment to communicator or department head
                     */
+                    await PostTicketRequestorSendComment(request);
                     return (Results.Success, "Successfully send");
                 }
                 else if (ResultCode == "0")
@@ -251,10 +254,10 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             }
             return (Results.Null, null);
         }
-        public async Task<bool> PostTicketRequestorSendComment(IDictionary<string, object> data)
+        public async Task<bool> PostTicketRequestorSendComment(TicketCommentModel data)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/5/{account.DEPT_ID}/requestorhead/",
-                new { type = "requestorhead-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}{account.USR_ID}/comment",
+                new { type = "requestorhead-notification", content = SubscriberDto.RequestTicketCommentNotification(data) });
             return true;
         }
 

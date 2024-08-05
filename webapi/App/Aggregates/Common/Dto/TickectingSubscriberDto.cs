@@ -198,7 +198,7 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Categoryname = data["CAT_DESCR"].Str();
             o.PriorityLevel = data["PRIORITY_LVL"].Str();
             o.PriorityLevelname = data["PRIORITY_LVL_NM"].Str();
-            o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("dd MMM yyyy");
+            o.CreatedDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("dd MMM yyyy hh:mm");
             o.AssignedAccount = data["AssignedAccount"].Str();
             o.AssignedAccountname = data["AssignedAccountname"].Str();
             o.AssignedAccountEmail = data["AssignedAccountEmail"].Str();
