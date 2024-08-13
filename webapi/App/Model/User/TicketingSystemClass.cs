@@ -118,4 +118,10 @@ namespace webapi.App.Model.User
         public int ActionEvent;
     }
 
+    public class ElapsedTime
+    {
+        public string ticketNo;
+        public long time;
+    }
+
 }

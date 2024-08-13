@@ -293,6 +293,18 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
             return NotFound();
         }
 
+        [HttpPost]
+        [Route("elapsedtime/update")]
+        public async Task<IActionResult> UpdateElapsedTime([FromBody] ElapsedTime request)
+        {
+            var result = await _repo.UpdateElapsedTime(request);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", Message = result.message });
+            else if (result.result == Results.Failed)
+                return Ok(new { Status = "error", Message = result.message });
+            return NotFound();
+        }
+
 
     }
 }

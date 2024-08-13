@@ -30,6 +30,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
         Task<(Results result, object obj)> SeenAsync(String transactionNo);
         Task<(Results result, object isassigned)> IsAssignedAsync(String transactionNo);
         Task<(Results result, String message)> RessolvedAsync(TicketRessolve request);
+        Task<(Results result, string message)> UpdateElapsedTime(ElapsedTime request);
     }
     public class TicketRepository : ITicketRepository
     {
@@ -334,6 +335,28 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             {
                 var row = ((IDictionary<string, object>)result);
                 return (Results.Success, row["isAssigned"].Str());
+            }
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, string message)> UpdateElapsedTime(ElapsedTime request)
+        {
+            var result = _repo.DSpQuery<dynamic>($"dbo.spfn_UPDELAPSEDTIME", new Dictionary<string, object>()
+            {
+                //{"parmplid", account.PL_ID},
+                //{"parmpgrpid", account.PGRP_ID},
+                {"parmticketno",request.ticketNo},
+                {"parmelapsedtime", request.time}
+
+            }).FirstOrDefault();
+            if (result != null)
+            {
+                var row = ((IDictionary<string, object>)result);
+                string ResultCode = row["RESULT"].Str();
+                if (ResultCode == "1")
+                    return (Results.Success, "Successfully save.");
+                else if (ResultCode == "0")
+                    return (Results.Failed, "Please check data. Try again");
             }
             return (Results.Null, null);
         }
