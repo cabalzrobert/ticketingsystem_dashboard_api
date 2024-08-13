@@ -275,5 +275,32 @@ namespace webapi.App.Aggregates.Common.Dto
             o.isMessage = (data["isMessage"].Str() == "") ? false : Convert.ToBoolean(data["isMessage"].Str());
             return o;
         }
+
+        public static IDictionary<string, object> SendCommentNotification(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            //o.Num_Row = (data["Num_Row"].Str() == "") ? 0 : Convert.ToInt32(data["Num_Row"].Str());
+            o.Company_ID = data["PL_ID"].Str();
+            o.Branch_ID = data["PGRP_ID"].Str();
+            o.CommentID = data["COMMNT_ID"].Str();
+            o.TransactionNo = data["TRN_NO"].Str();
+            o.SenderID = data["SNDR_ID"].Str();
+            o.DisplayName = data["DSPLY_NM"].Str();
+            o.Department = data["DEPT_DESCR"].Str();
+            o.ProfilePicture = data["PROF_IMG_URL"].Str();
+            o.Message = data["MSG"].Str();
+            o.isImage = (data["S_IMG"].Str() == "") ? false : Convert.ToBoolean(data["S_IMG"].Str());
+            o.isFile = (data["S_FILE"].Str() == "") ? false : Convert.ToBoolean(data["S_FILE"].Str());
+            o.CommentDate = (data["RGS_TRN_TS"].Str() == "") ? "" : Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM dd yyy hh:mm tt");
+            o.isRead = (data["isRead"].Str() == "") ? false : Convert.ToBoolean(data["isRead"].Str());
+            o.IsYou = (data["isYou"].Str() == "") ? false : Convert.ToBoolean(data["isYou"].Str());
+            o.ImageAttachment = data["IMG_Atachment"].Str();
+            o.FileAttachment = data["FILE_Atachment"].Str();
+            o.isMessage = (data["isMessage"].Str() == "") ? false : Convert.ToBoolean(data["isMessage"].Str());
+            return o;
+        }
+
+
     }
 }

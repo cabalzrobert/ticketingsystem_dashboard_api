@@ -246,7 +246,16 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                     /*
                     function to send comment to communicator or department head
                     */
-                    await PostTicketRequestorSendComment(request);
+                    if (!row1["RequestorID"].Str().IsEmpty())
+                        await PostTicketRequestorSendComment(request.CommentID, row1["RequestorID"].Str(), request.TransactionNo);
+                    if (!row1["RequestorDepartmentHeadID"].Str().IsEmpty())
+                        await PostTicketRequestorSendComment(request.CommentID, row1["RequestorDepartmentHeadID"].Str(), request.TransactionNo);
+                    if (!row1["ReceivedDepartmentHeadID"].Str().IsEmpty())
+                        await PostTicketRequestorSendComment(request.CommentID, row1["ReceivedDepartmentHeadID"].Str(), request.TransactionNo);
+                    if (!row1["Assigned_Account"].Str().IsEmpty())
+                        await PostTicketRequestorSendComment(request.CommentID, row1["Assigned_Account"].Str(), request.TransactionNo);
+                    if (!row1["CommunicatorID"].Str().IsEmpty())
+                        await PostTicketRequestorSendComment(request.CommentID, row1["CommunicatorID"].Str(), request.TransactionNo);
                     return (Results.Success, "Successfully send");
                 }
                 else if (ResultCode == "0")
@@ -254,10 +263,19 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             }
             return (Results.Null, null);
         }
-        public async Task<bool> PostTicketRequestorSendComment(TicketCommentModel data)
+        public async Task<bool> PostTicketRequestorSendComment(string commentid, string ReceiverID, string transactionno)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}{account.USR_ID}/comment",
-                new { type = "requestorhead-notification", content = SubscriberDto.RequestTicketCommentNotification(data) });
+            var comment = _repo.DSpQuery<dynamic>("dbo.spfn_AEARP0J", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID },
+                {"parmpgrpid", account.PGRP_ID },
+                {"parmuserid", ReceiverID },
+                {"parmtrnno", transactionno },
+                {"parmcommentid", commentid }
+            }).FirstOrDefault();
+
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{ReceiverID}/comment",
+                new { type = "requestorhead-notification", content = TickectingSubscriberDto.SendCommentNotification(comment), transactionno = transactionno });
             return true;
         }
 

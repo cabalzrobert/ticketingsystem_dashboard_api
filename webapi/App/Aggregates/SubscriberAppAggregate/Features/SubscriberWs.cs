@@ -85,6 +85,8 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
             //stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/notify", this.receivedNotication);
             stack.subscribe($"/{account.PL_ID}/test/notify", this.receivedNotication);
 
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/comment", this.receivedSubscriberCommentTicket);
+
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{Convert.ToInt32(account.isCommunicator)}/ticketrequest/iscommunicator", this.receivedTicketRequestCommunicator);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.ACT_TYP}/{account.DEPT_ID}/requestorhead", this.receivedTicketRequestorHead);
@@ -148,6 +150,11 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         private void receivedBranchNotication(Ultralight.StompMessage message){
             stomp("/branch", message.Body);
         }
+
+        private void receivedSubscriberCommentTicket(Ultralight.StompMessage message)
+        {
+            stomp("/comment", message.Body);
+        }
         private void receivedNotication(Ultralight.StompMessage message)
         {
             stomp("/test/notify", message.Body);
@@ -191,6 +198,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         private void receivedSubscriberChat(Ultralight.StompMessage message){
             stomp("/chat", message.Body);
         }
+        
         private void receivedSubscriberVirtualID(Ultralight.StompMessage message)
         {
             stomp("/virtualid", message.Body);

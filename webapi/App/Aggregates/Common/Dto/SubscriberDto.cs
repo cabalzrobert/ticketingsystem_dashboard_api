@@ -1368,11 +1368,8 @@ namespace webapi.App.Aggregates.Common
             //o.Ticket
             return o;
         }
-        public static TicketCommentModel RequestTicketCommentNotification(TicketCommentModel data)
-        {
-            dynamic o = Dynamic.Object;
-            return o;
-        }
+
+
 
         public static IDictionary<string, object> RequestTicketNotification(IDictionary<string, object> data)
         {

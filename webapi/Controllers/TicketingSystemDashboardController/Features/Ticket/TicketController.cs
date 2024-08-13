@@ -198,6 +198,8 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
 
         private async Task<(Results result, string message)> attachmentvalidity(TicketCommentModel request)
         {
+            string strlocal = _config["Portforwarding:LOCAL"].Str();
+            string strportforward = _config["Portforwarding:URL"].Str();
             if (request == null)
                 return (Results.Null, null);
 
@@ -230,7 +232,10 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Ticket
                     if (json["status"].Str() != "error")
                     {
                         //string url = json["url"].Str().Replace("https://119.93.89.82", "http://119.93.89.82:5000");
-                        string url = json["url"].Str().Replace("https://119.92.80.34", "http://119.92.80.34:50000");
+                        //string url = json["url"].Str().Replace("https://119.92.80.34", "http://119.92.80.34:50000");
+                        
+                        string url = (json["url"].Str()).Replace("https://119.92.80.34", "http://119.92.80.34:50000");
+
                         request.ImageAttachment = url;
                         //string url = (json["url"].Str()).Replace(_config["Portforwarding:LOCAL"].Str(), _config["Portforwarding:URL"].Str());
                         sb.Append($"<item LNK_URL=\"{ url }\" />");
