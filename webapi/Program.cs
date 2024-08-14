@@ -14,9 +14,9 @@ namespace webapi
     {
         public static void Main(string[] args)
         {
-            //CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).Build().Run();
             
-            
+            /*
             var configuration = new ConfigurationBuilder()
                     .AddCommandLine(args)
                     .Build();
@@ -35,7 +35,7 @@ namespace webapi
                 .Build();
 
             host.Run();
-            
+            */
             
         }
 

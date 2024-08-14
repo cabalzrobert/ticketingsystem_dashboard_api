@@ -86,6 +86,30 @@ namespace webapi.App.Aggregates.Common.Dto
             return o;
         }
 
+        public static IEnumerable<dynamic> GetReportList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetReport_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetReport_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_Report_List(e));
+        }
+        public static IDictionary<string, object> Get_Report_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Department = data["DEPT_DESCR"].Str();
+            o.DepartmentID = data["DEPT_ID"].Str();
+            o.Pending = data["Pending"].Str();
+            o.Resolve = data["Resolve"].Str();
+            o.Cancell = data["Cancell"].Str();
+            o.Ongoing = data["Ongoing"].Str();
+            return o;
+        }
+
         public static IEnumerable<dynamic> GetRolesList(IEnumerable<dynamic> data, bool fullinfo = true)
         {
             if (data == null) return null;
