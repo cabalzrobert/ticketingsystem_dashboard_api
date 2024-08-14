@@ -232,6 +232,7 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Attachment = data["ATTCHMNT"].Str();
             o.Department = data["DepartmentID"].Str();
             o.DepartmentName = data["DepartmentName"].Str();
+            o.ElapsedTime = data["elapsedTime"].Str();
             o.isRead = Convert.ToBoolean(data["S_OPN"]);
             return o;
         }
