@@ -41,6 +41,11 @@ namespace webapi.App.Model.User
         public string RolesID;
         public string Rolesname;
     }
+    public class UserAccessModel
+    {
+        public string USR_ID;
+        public string MenuTab;
+    }
     public class UserAccountModel
     {
         public string UserAccountID;

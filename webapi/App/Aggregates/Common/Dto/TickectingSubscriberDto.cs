@@ -110,6 +110,37 @@ namespace webapi.App.Aggregates.Common.Dto
             return o;
         }
 
+        public static IEnumerable<dynamic> GetTicketElapsedReportList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetTicketElapsedReport_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetTicketElapsedReport_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_TicketElapsedReport_List(e));
+        }
+        public static IDictionary<string, object> Get_TicketElapsedReport_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.Row_Num = (data["Row_Num"].Str() == "") ? 0 : Convert.ToInt32(data["Row_Num"].Str());
+            o.USR_ID = data["USR_ID"].Str();
+            o.RequestorName = data["Requestor"].Str();
+            o.PL_ID = data["PL_ID"].Str();
+            o.PGRP_ID = data["PGRP_ID"].Str();
+            o.TransactionNo = data["TRN_NO"].Str();
+            o.TicketNo = data["TCKT_NO"].Str();
+            o.TitleTicket = data["SBJCT"].Str();
+            o.CreatedDate = Convert.ToDateTime(data["RGS_TRN_TS"].Str()).ToString("MMM dd, yyyy hh:mm tt");
+            o.ElapsedTime = data["ElapsedTime"].Str();
+            o.Status = data["Status"].Str();
+            o.TicketRequestEvent = data["TicketRequestEvent"].Str();
+            o.ViewEvent = true;
+            return o;
+        }
+
         public static IEnumerable<dynamic> GetRolesList(IEnumerable<dynamic> data, bool fullinfo = true)
         {
             if (data == null) return null;
@@ -129,6 +160,30 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Company_ID = data["PL_ID"].Str();
             o.RolesID = data["ROLEID"].Str();
             o.Rolesname = data["ROLE_DESCR"].Str();
+            return o;
+        }
+
+        public static IEnumerable<dynamic> GetUserAccessList(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            var items = GetUserAccess_List(data);
+            return items;
+        }
+        public static IEnumerable<dynamic> GetUserAccess_List(IEnumerable<dynamic> data, bool fullinfo = true)
+        {
+            if (data == null) return null;
+            return data.Select(e => Get_UserAccess_List(e));
+        }
+        public static IDictionary<string, object> Get_UserAccess_List(IDictionary<string, object> data)
+        {
+            dynamic o = Dynamic.Object;
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            o.UserAccount = data["FLL_NM"].Str();
+            o.AccountTypeName = data["AccountTypeName"].Str();
+            o.DepartmentName = data["DEPT_DESCR"].Str();
+            o.USR_ID = data["USR_ID"].Str();
+            o.MenuTab = data["PGS"].Str();
+            o.ViewMenu = (data["PGS"].Str() == "") ? false : true;
             return o;
         }
 

@@ -17,6 +17,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Report
     public interface IReportRepository
     {
         Task<(Results result, object rpt)> LoadReportRequestperDepartmentAsync();
+        Task<(Results result, object rpt)> LoadReportTicketRequestperElapsedTimeAsync(FilterRequest req);
+
     }
     public class ReportRepository : IReportRepository
     {
@@ -39,6 +41,22 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Report
             });
             if (results != null)
                 return (Results.Success, TickectingSubscriberDto.GetReportList(results));
+            return (Results.Null, null);
+        }
+
+        public async Task<(Results result, object rpt)> LoadReportTicketRequestperElapsedTimeAsync(FilterRequest req)
+        {
+            var results = _repo.DSpQuery<dynamic>($"dbo.spfn_RPT0002", new Dictionary<string, object>()
+            {
+                //{"parmplid",account.PL_ID },
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmdatefrom", req.From},
+                {"parmdateto", req.To},
+
+            });
+            if (results != null)
+                return (Results.Success, TickectingSubscriberDto.GetTicketElapsedReportList(results));
             return (Results.Null, null);
         }
     }

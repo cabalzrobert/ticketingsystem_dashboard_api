@@ -42,5 +42,17 @@ namespace webapi.Controllers.TicketingSystemDashboardController.Features.Report
                 return Ok(new { Status = "error", report = result.rpt });
             return NotFound();
         }
+        [HttpPost]
+        [Route("ticketrequestelapsedtime")]
+        public async Task<IActionResult> TicketRequestElapsedTime([FromBody] FilterRequest param)
+        {
+            var result = await _repo.LoadReportTicketRequestperElapsedTimeAsync(param);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", report = result.rpt });
+            else
+            if (result.result == Results.Failed)
+                return Ok(new { Status = "error", report = result.rpt });
+            return NotFound();
+        }
     }
 }
