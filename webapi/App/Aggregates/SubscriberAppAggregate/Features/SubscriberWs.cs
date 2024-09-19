@@ -9,6 +9,7 @@ using System.Net.WebSockets;
 using webapi.App.Features.WebSocketFeature;
 using webapi.App.Model.User;
 using webapi.App.Features.UserFeature;
+using Org.BouncyCastle.Asn1.BC;
 
 namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
 {
@@ -93,6 +94,7 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.ACT_TYP}/communicator", this.receivedTicketRequestorHead);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/forwardticket", this.receivedFowardTicket);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/requestor", this.receivedTicketRequestor);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/deptforwardticket", this.receivedFowardTicket);
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/forwardticket/depthead/{Convert.ToInt32(account.isDeptartmentHead)}", this.receivedTicketForwadedDeptHead);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/assigned", this.receivedTicketAssignedTo);
@@ -175,6 +177,11 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         private void receivedFowardTicket(Ultralight.StompMessage message)
         {
             stomp("/forwardticket", message.Body);
+        }
+
+        private void receivedComForwardTicket(Ultralight.StompMessage message)
+        {
+            stomp("/deptforwardticket", message.Body);
         }
         private void receivedTicketCommunicator(Ultralight.StompMessage message)
         {

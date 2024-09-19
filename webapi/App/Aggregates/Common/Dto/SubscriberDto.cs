@@ -1407,6 +1407,7 @@ namespace webapi.App.Aggregates.Common
             o.ticketStatusId = Convert.ToInt32(data["TCKT_STAT"]);
             o.ticketStatus = data["ticketStatus"].Str();
             o.dateCreated = data["dateCreated"].Str();
+            o.elapsedTime = data["elapsedTime"].Str();
 
             //o.Attachment = data["ATTCHMNT"].Str();
             //o.TotalAttachment = data["TTL_ATTCHMNT"].Str();

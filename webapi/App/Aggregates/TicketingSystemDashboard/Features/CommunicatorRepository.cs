@@ -128,7 +128,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         public async Task<bool> PostForwardTicket(IDictionary<string, object> data, string forwardto, string forwardDepartment)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardDepartment}/{forwardto}/forwardticket",
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardDepartment}/deptforwardticket",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<bool> PostForwardTicket(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/forwardticket",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
             return true;
         }
