@@ -53,6 +53,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Report
                 {"parmpgrpid", account.PGRP_ID},
                 {"parmdatefrom", req.From},
                 {"parmdateto", req.To},
+                {"parmsearch", req.Search }
 
             });
             if (results != null)
