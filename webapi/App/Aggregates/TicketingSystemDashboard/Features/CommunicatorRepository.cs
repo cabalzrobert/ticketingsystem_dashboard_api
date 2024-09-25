@@ -21,9 +21,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         Task<(Results result, string message)> CreateTicket(TicketInfo ticket);
         Task<(Results result, object tickets)> GetTickets(FilterTickets param);
         Task<(Results result, string message)> ForwardTicket(TicketInfo ticket);
+        Task<(Results result, string message)> ResolveTicket(string ticketNo);
+        Task<(Results result, string message)> DeclineTicket(string ticketNo);
         Task<(Results result, string message)> ConfirmationForwardTicket(TicketInfo ticket);
         Task<(Results result, object comments)> GetComments(string transactionNo);
         Task<(Results result, object cntticket)> LoadCntTicketAsync();
+
     }
     public class CommunicatorRepository : ICommunicatorRepository
     {
@@ -142,6 +145,68 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         public async Task<bool> RequestorTicket(IDictionary<string, object> data, string requestorid)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{requestorid}/forwardticket",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<(Results result, string message)> ResolveTicket(string ticketNo)
+        {
+            string supportAccount = _fd.String("Company:Support");
+            var splitAccount = supportAccount.Split(':');
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_RESOLVETICKET", new Dictionary<string, object>()
+            {
+                {"parmplid", account.PL_ID},
+                {"parmpgrpid", account.PGRP_ID},
+                {"parmuserid", account.USR_ID},
+                {"parmticketno", ticketNo }
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+            {
+                //Email Service
+                Timeout.Set(() => EmailServices.PrepareSendingToGmail("resolve", $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()), 275);
+                this.requestTicketApproval(results, row["requestId"].Str());
+                return (Results.Success, "Success");
+            }
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed");
+            return (Results.Null, null);
+
+        }
+
+        public async Task<bool> requestTicketApproval(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/approval",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<(Results result, string message)> DeclineTicket(string ticketNo)
+        {
+            var results = _repo.DSpQuery<dynamic>("dbo.spfn_CANCELTICKET", new Dictionary<string, object>()
+            {
+                {"parmuserid", account.USR_ID},
+                {"parmticketno", ticketNo }
+            }).FirstOrDefault();
+
+            var row = (IDictionary<string, object>)results;
+            string resultCode = row["RESULT"].Str();
+            if (resultCode == "1")
+            {
+                this.requestTicketDeclined(results, row["requestId"].Str());
+                return (Results.Success, "Success");
+            }
+            else if (resultCode == "0")
+                return (Results.Failed, "Failed");
+            return (Results.Null, null);
+
+        }
+
+        public async Task<bool> requestTicketDeclined(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/decline",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
             return true;
         }

@@ -334,12 +334,31 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 var row = ((IDictionary<string, object>)result);
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
+                {
+                    this.sendTicketResolved(result, row["assignedId"].Str());
+                    this.countTickets(result, row["assignedId"].Str());
                     return (Results.Success, "Successfully save.");
+                }
                 else if (ResultCode == "0")
                     return (Results.Failed, "Please check data. Try again");
             }
             return (Results.Null, null);
         }
+
+        public async Task<bool> sendTicketResolved(IDictionary<string, object> data, string assigned)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{assigned}/resolve",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<bool> countTickets(IDictionary<string, object> data, string assigned)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{assigned}/countticket",
+                new { type = "forwardticket-notification", content = new { countComTickets = data["countComTickets"], countHeadTickets = data["countHeadTickets"] } });
+            return true;
+        }
+
 
         public async Task<(Results result, object isassigned)> IsAssignedAsync(string transactionNo)
         {

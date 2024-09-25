@@ -58,6 +58,28 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
         }
 
         [HttpPost]
+        [Route("ticket/resolve")]
+        public async Task<IActionResult> ResolveTicket(string ticketNo)
+        {
+            var result = await _repo.ResolveTicket(ticketNo);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", message = result.message });
+            return BadRequest();
+            //Need WebSocket
+        }
+
+        [HttpPost]
+        [Route("ticket/cancel")]
+        public async Task<IActionResult> DeclineTicket(string ticketNo)
+        {
+            var result = await _repo.DeclineTicket(ticketNo);
+            if (result.result == Results.Success)
+                return Ok(new { Status = "ok", message = result.message });
+            return BadRequest();
+            //Need WebSocket
+        }
+
+        [HttpPost]
         [Route("ticket/forward/permission")]
         public async Task<IActionResult> ConfirmationForwardTicket(TicketInfo ticket)
         {
@@ -77,6 +99,7 @@ namespace webapi.Controllers.TicketingSystemDashboardController.TicketingSystemC
                 return Ok(result.comments);
             return BadRequest();
         }
+
         [HttpPost]
         [Route("count")]
         public async Task<IActionResult> TaskTicketCount()

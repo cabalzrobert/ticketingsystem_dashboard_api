@@ -95,6 +95,12 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/forwardticket", this.receivedFowardTicket);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/requestor", this.receivedTicketRequestor);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/deptforwardticket", this.receivedComForwardTicket);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/return", this.receivedTicketReturned);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/cancel", this.receivedTicketCanceled);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/approval", this.receivedTicketApproval);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/decline", this.receivedTicketDeclined);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/resolve", this.receivedTicketResolved);
+            stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/countticket", this.ticketCount);
 
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.DEPT_ID}/forwardticket/depthead/{Convert.ToInt32(account.isDeptartmentHead)}", this.receivedTicketForwadedDeptHead);
             stack.subscribe($"/{account.PL_ID}/{account.PGRP_ID}/{account.USR_ID}/assigned", this.receivedTicketAssignedTo);
@@ -183,6 +189,37 @@ namespace webapi.App.Aggregates.SubscriberAppAggregate.Features
         {
             stomp("/deptforwardticket", message.Body);
         }
+
+        private void receivedTicketReturned(Ultralight.StompMessage message)
+        {
+            stomp("/return", message.Body);
+        }
+
+        private void receivedTicketApproval(Ultralight.StompMessage message)
+        {
+            stomp("/approval", message.Body);
+        }
+
+        private void receivedTicketDeclined(Ultralight.StompMessage message)
+        {
+            stomp("/decline", message.Body);
+        }
+
+        private void receivedTicketCanceled(Ultralight.StompMessage message)
+        {
+            stomp("/cancel", message.Body);
+        }
+
+        private void receivedTicketResolved(Ultralight.StompMessage message)
+        {
+            stomp("/resolve", message.Body);
+        }
+
+        private void ticketCount(Ultralight.StompMessage message)
+        {
+            stomp("/countticket", message.Body);
+        }
+
         private void receivedTicketCommunicator(Ultralight.StompMessage message)
         {
             stomp("/communicator", message.Body);

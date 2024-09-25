@@ -127,7 +127,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 //Email Service
                 Timeout.Set(()=>EmailServices.PrepareSendingToGmail("forward", $"Ticket no. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["assignedEmail"].Str()),275);
 
-                await PostTicketRequest(results, ticket.assignedTo);
+                await assignedTicket(results, ticket.assignedTo);
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -136,7 +136,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<bool> PostTicketRequest(IDictionary<string, object> data, string assignedTo)
+        public async Task<bool> assignedTicket(IDictionary<string, object> data, string assignedTo)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{assignedTo}/assigned",
                 new { type = "assigned-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
@@ -173,6 +173,14 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
+        public async Task<bool> requestTicketReturned(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/return",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+
         public async Task<(Results result, object personnels)> LoadPersonnels(string id)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_GETPERSONNELS", new Dictionary<string, object>()
@@ -205,8 +213,8 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Email Service
-               Timeout.Set(()=>EmailServices.PrepareSendingToGmail("resolve", $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()),275);
-
+                Timeout.Set(()=>EmailServices.PrepareSendingToGmail("resolve", $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()),275);
+                this.requestTicketApproval(results, row["requestId"].Str());
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -226,11 +234,28 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                this.requestTicketApproval(results, row["requestId"].Str());
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
+        }
+
+        public async Task<bool> requestTicketApproval(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/approval",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<bool> sendTicketApproved(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/approval",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
         }
 
         public async Task<(Results result, string message)> DeclineTicket(string ticketNo)
