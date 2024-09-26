@@ -308,6 +308,8 @@ namespace webapi.App.Aggregates.Common.Dto
             o.Unassigned = data["Unassigned"].Str();
             o.Assigned = data["Assigned"].Str();
             o.UnsolvedTickets = data["UnsolvedTickets"].Str();
+            o.Resolved = data["Resolved"].Str();
+            o.AllTickets = data["AllTickets"].Str();
             return o;
         }
 
