@@ -118,7 +118,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
                 //for pusher function department head receiver
                 //await PostTicketRequest(results, ticket.assignedDepartment);
-                await PostForwardTicket(results, ticket.forwardTo, ticket.forwardDepartment);
+                await PostForwardTicket(results, null, ticket.forwardDepartment);
                 await RequestorTicket(results, row["requestId"].Str());
 
                 return (Results.Success, "Success");
@@ -167,7 +167,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             {
                 //Email Service
                 Timeout.Set(() => EmailServices.PrepareSendingToGmail("resolve", $"Request for Acknowledgement Ticket No. #{row["ticketNo"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str()), 275);
-                this.requestTicketApproval(results, row["requestId"].Str());
+                await sendApprovalTicket(results, row["requestId"].Str());
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -176,7 +176,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<bool> requestTicketApproval(IDictionary<string, object> data, string forwardto)
+        public async Task<bool> sendApprovalTicket(IDictionary<string, object> data, string forwardto)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/approval",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
@@ -195,7 +195,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
             {
-                this.requestTicketDeclined(results, row["requestId"].Str());
+                await sendDeclinedTicket(results, row["requestId"].Str());
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -204,7 +204,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
         }
 
-        public async Task<bool> requestTicketDeclined(IDictionary<string, object> data, string forwardto)
+        public async Task<bool> sendDeclinedTicket(IDictionary<string, object> data, string forwardto)
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/decline",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });

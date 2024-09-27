@@ -143,7 +143,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             if (resultCode == "1")
             {
                 //Notification
-                //await PostForwardTicket(results, row["forwardTo"].Str());
+                await sendReturnTicket(results, row["forwardTo"].Str());
 
                 return (Results.Success, "Success");
             }
@@ -151,6 +151,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
+        }
+
+        public async Task<bool> sendReturnTicket(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/return",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
         }
 
         public async Task<(Results result, object personnels)> LoadPersonnels(string id)
@@ -180,12 +187,23 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                await sendApprovalTicket(results, row["requestId"].Str());   
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
         }
+
+        public async Task<bool> sendApprovalTicket(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/approval",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
 
         public async Task<(Results result, string message)> CancelTicket(string ticketNo)
         {
@@ -198,11 +216,20 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             var row = (IDictionary<string, object>)results;
             string resultCode = row["RESULT"].Str();
             if (resultCode == "1")
+            {
+                await sendCancelDoneTicket(results, row["requestId"].Str());
                 return (Results.Success, "Success");
+            }
             else if (resultCode == "0")
                 return (Results.Failed, "Failed");
             return (Results.Null, null);
 
+        }
+        public async Task<bool> sendCancelDoneTicket(IDictionary<string, object> data, string forwardto)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/decline",
+                new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
         }
 
         public async Task<(Results result, string message)> ForwardTicket(TicketInfo ticket)
