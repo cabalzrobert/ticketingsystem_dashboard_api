@@ -1408,6 +1408,7 @@ namespace webapi.App.Aggregates.Common
             o.ticketStatus = data["ticketStatus"].Str();
             o.dateCreated = data["dateCreated"].Str();
             o.elapsedTime = data["elapsedTime"].Str();
+            o.isRequiredCommunicator = Convert.ToBoolean(data["isRequiredCommunicator"]);
 
             //o.Attachment = data["ATTCHMNT"].Str();
             //o.TotalAttachment = data["TTL_ATTCHMNT"].Str();
