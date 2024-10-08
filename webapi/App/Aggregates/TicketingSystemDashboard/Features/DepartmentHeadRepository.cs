@@ -164,7 +164,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 
                 //Notification
                 await sendReturnTicket(results, row["forwardTo"].Str());
-
+                await sendCountTicket(account.USR_ID, "decrement");
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -180,7 +180,12 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             return true;
         }
 
-
+        public async Task<bool> sendCountTicket(string notifyTo, string action)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{notifyTo}/countticket",
+                new { type = "forwardticket-notification", content = new { counter = 1, action = action } });
+            return true;
+        }
         public async Task<(Results result, object personnels)> LoadPersonnels(string id)
         {
             var results = _repo.DSpQuery<dynamic>("dbo.spfn_GETPERSONNELS", new Dictionary<string, object>()
@@ -297,6 +302,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
                 //Email Service
                 //EmailServices.PrepareSendingToGmail(account.FLL_NM, $"Forward this ticket no. #{row["ticketNo"].Str()} to {row["departmentName"].Str()}", row, splitAccount[0], splitAccount[1], row["forwardEmail"].Str());
                 await sendCanceledTicket(results, row["requestId"].Str());
+                await sendCountTicket(account.USR_ID, "decrement");
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")

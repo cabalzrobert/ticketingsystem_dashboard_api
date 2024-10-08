@@ -10,6 +10,7 @@ using webapi.App.Aggregates.SubscriberAppAggregate.Common;
 using webapi.App.Model.User;
 using webapi.App.Aggregates.Common.Dto;
 using webapi.App.Features.UserFeature;
+using System;
 
 namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
 {
@@ -144,7 +145,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
             {
                 //Notification
                 await sendReturnTicket(results, row["forwardTo"].Str());
-
+                await sendCountTicket(account.USR_ID,"decrement");
                 return (Results.Success, "Success");
             }
             else if (resultCode == "0")
@@ -157,6 +158,13 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features
         {
             await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{forwardto}/return",
                 new { type = "forwardticket-notification", content = SubscriberDto.RequestTicketNotification(data), notification = SubscriberDto.RequestNotification(data) });
+            return true;
+        }
+
+        public async Task<bool> sendCountTicket(string notifyTo, string action)
+        {
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{notifyTo}/countticket",
+                new { type = "forwardticket-notification", content = new { counter = 1, action = action } });
             return true;
         }
 
