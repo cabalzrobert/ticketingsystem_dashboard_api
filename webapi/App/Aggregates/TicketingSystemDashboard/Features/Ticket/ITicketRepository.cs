@@ -335,7 +335,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 string ResultCode = row["RESULT"].Str();
                 if (ResultCode == "1")
                 {
-                    this.sendTicketResolved(result, row["assignedId"].Str());
+                    await sendTicketResolved(result, row["assignedId"].Str());
                     //this.sendCountTicket(account.USR_ID, "decrement");
                     return (Results.Success, "Successfully save.");
                 }
