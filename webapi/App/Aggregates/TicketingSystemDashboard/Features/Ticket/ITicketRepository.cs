@@ -336,7 +336,7 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
                 if (ResultCode == "1")
                 {
                     this.sendTicketResolved(result, row["assignedId"].Str());
-                    this.countTickets(result, row["assignedId"].Str());
+                    //this.sendCountTicket(account.USR_ID, "decrement");
                     return (Results.Success, "Successfully save.");
                 }
                 else if (ResultCode == "0")
@@ -352,10 +352,10 @@ namespace webapi.App.Aggregates.TicketingSystemDashboard.Features.Ticket
             return true;
         }
 
-        public async Task<bool> countTickets(IDictionary<string, object> data, string assigned)
+        public async Task<bool> sendCountTicket(string notifyTo, string action)
         {
-            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{assigned}/countticket",
-                new { type = "forwardticket-notification", content = new { countComTickets = data["countComTickets"], countHeadTickets = data["countHeadTickets"] } });
+            await Pusher.PushAsync($"{account.PL_ID}/{account.PGRP_ID}/{notifyTo}/countticket",
+                new { type = "forwardticket-notification", content = new { counter = 1, action = action } });
             return true;
         }
 
